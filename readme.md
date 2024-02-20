@@ -49,7 +49,7 @@ This project is licensed under the MIT License.
 
 ## Acknowledgements
 
-- This project was made possible thanks to the wonderful community and resources available for React Native development.
+- This project was made possible thanks to the wonderful community and resources available for React Native development.asdfadsf
 - Special thanks to contributors who have helped improve and maintain this project.
 
 Feel free to reach out with any questions, feedback, or suggestions. Happy tracking your finances! 📊💰
