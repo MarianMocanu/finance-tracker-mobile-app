@@ -1,9 +1,8 @@
 import { FC } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Button from "../../shared/Button";
-import { colors } from "../../../globals/style";
 import { CommonActions, useNavigation } from "@react-navigation/native";
-import Card from "../../shared/Card";
+import Card from "@shared/Card";
+import { colors } from "@globals/style";
 
 type Entry = {
   id: number;
@@ -31,7 +30,7 @@ const dummyEntries: Entry[] = [
 
 type Props = {};
 
-const EntriesListScreen: FC = () => {
+const EntriesList: FC = () => {
   const navigation = useNavigation();
 
   function navigateToDetailedView(id: number): void {
@@ -50,7 +49,7 @@ const EntriesListScreen: FC = () => {
         data={dummyEntries}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.card} onPress={() => navigateToDetailedView(item.id)}>
-            <Card borderColor='black'>
+            <Card borderColor="black">
               <Text>{item.name}</Text>
               <Text>{item.value}</Text>
             </Card>
@@ -61,7 +60,7 @@ const EntriesListScreen: FC = () => {
   );
 };
 
-export default EntriesListScreen;
+export default EntriesList;
 
 const styles = StyleSheet.create({
   container: {

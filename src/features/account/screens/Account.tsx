@@ -1,15 +1,15 @@
 import { FC } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-const EntryDetailsScreen: FC = () => {
+const Account: FC = () => {
   return (
     <View style={style.container}>
-      <Text>Here is the entry details screen</Text>
+      <Text>Here is the profile screen</Text>
     </View>
   );
 };
 
-export default EntryDetailsScreen;
+export default Account;
 
 const style = StyleSheet.create({
   container: {
