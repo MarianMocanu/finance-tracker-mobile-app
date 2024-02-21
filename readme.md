@@ -1,4 +1,4 @@
-# Finance Tracker App
+# Finance Tracker App - Expo/React-Native
 
 This React Native application serves as a comprehensive finance tracker, allowing users to manage their expenses, track income, and gain insights into their financial habits. With an intuitive interface and robust functionality, users can effectively monitor their spending, set budgets, and achieve their financial goals.
 
