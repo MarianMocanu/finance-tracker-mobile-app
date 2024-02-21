@@ -5,7 +5,10 @@
     "baseUrl": "./",
     "paths": {
       "@shared/*": ["src/features/shared/*"],
-      "@globals/*": ["src/globals/*"]
+      "@globals/*": ["src/globals/*"],
+      "@queries/*": ["src/queries/*"],
+      "@services/*": ["src/services/*"],
+      "@models": ["src/models/index"]
     }
   }
 }
