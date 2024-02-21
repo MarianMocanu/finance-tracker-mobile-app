@@ -12,37 +12,43 @@ This React Native application serves as a comprehensive finance tracker, allowin
 - **Secure Authentication:** Securely log in with authentication mechanisms to protect your financial data.
 - **Multi-platform Compatibility:** Works seamlessly on both iOS and Android platforms.
 
-## Installation
+## Setup
 
 To run this application locally, follow these steps:
 
-1. **Clone Repository:** Clone this repository to your local machine using the following command:
+1. **Clone the repository to your local machine:**
 
    ```bash
-   git clone https://github.com/yourusername/finance-tracker.git
+   git clone <repository_url>
    ```
 
-2. **Install Dependencies:** Navigate to the project directory and install dependencies by running:
+2. **Navigate to the project directory:**
+
+   ```bash
+   cd <project_directory>
+   ```
+
+3. **Create a .env file in the root directory of the project with the following content:**
+
+   ```env
+   HOST=<your_ip_address>
+   ```
+
+   Replace `<your_ip_address>` with your actual ip address found by running `ipconfig` or `ifconfig`.
+
+4. **Install Dependencies:** Navigate to the project directory and install dependencies by running:
 
    ```bash
    npm install
    ```
 
-3. **Configure Environment Variables:** Set up necessary environment variables such as API keys or authentication credentials. One of the environment variables is `HOST`, which should be set to your IP address.
-
-   ```bash
-   export HOST=<your_ip_address>
-   ```
-
-   Replace `<your_ip_address>` with your actual ip address found by running `ipconfig` or `ifconfig`.
-
-4. **Run the Application:** Start the development server by running:
+5. **Run the Application:** Start the development server by running:
 
    ```bash
    npx expo start
    ```
 
-5. **Run on iOS/Android:** Use Expo CLI or your preferred method to run the application on iOS or Android devices/emulators.
+6. **Run on iOS/Android:** Use Expo CLI or your preferred method to run the application on iOS or Android devices/emulators.
 
 ## Usage
 
