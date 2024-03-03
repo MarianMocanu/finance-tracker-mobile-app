@@ -1,6 +1,6 @@
-import { FC } from "react";
-import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from "react-native";
-import { colors } from "../../globals/style";
+import { FC } from 'react';
+import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
+import { colors } from '../../globals/style';
 
 type Props = {
   text: string;
@@ -21,15 +21,16 @@ export default Button;
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     height: 46,
     borderRadius: 46,
     backgroundColor: colors.blue.dark,
+    paddingHorizontal: 24,
   },
   text: {
     fontSize: 16,
     lineHeight: 18,
-    color: "#FFF",
+    color: '#FFF',
   },
 });

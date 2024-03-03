@@ -1,14 +1,14 @@
 const blue = {
-  light: "#E9EEF6",
-  base: "#1B9AC6",
-  dark: "#1A5681",
+  light: '#2FC2F7',
+  base: '#2f81f7',
+  dark: '#2F43F7',
 };
 
 const text = {
-  light: "#6E7F8B",
-  dark: "#0D293D",
+  light: '#6E7F8B',
+  dark: '#0D293D',
 };
 
-const border = "#94AEB7";
+const border = '#94AEB7';
 
 export const colors = { blue, text, border };
