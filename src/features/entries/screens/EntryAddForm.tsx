@@ -40,6 +40,7 @@ const EntryAddForm: FC = () => {
         </View>
       </View>
       <View style={styles.container}>
+        {/* AMOUNT INPUT */}
         <View style={styles.formFieldWrapper}>
           <Text style={styles.inputLabel}>Amount</Text>
           <TextInput
@@ -49,6 +50,7 @@ const EntryAddForm: FC = () => {
             value={'123'}
           ></TextInput>
         </View>
+        {/* CURRENCY INPUT WILL BE CHANGED TO DROPDOWN OF DKK/EUR/USD */}
         <View style={styles.formFieldWrapper}>
           <Text style={styles.inputLabel}>Currency</Text>
           <TextInput
@@ -57,6 +59,7 @@ const EntryAddForm: FC = () => {
             style={styles.inputField}
           ></TextInput>
         </View>
+        {/* DATE INPUT and MODAL HANDLER */}
         <Pressable onPress={() => setIsDateModalVisible(true)}>
           <View style={styles.formFieldWrapper} pointerEvents="none">
             <Text style={styles.inputLabel}>Date</Text>
@@ -68,8 +71,7 @@ const EntryAddForm: FC = () => {
             ></TextInput>
           </View>
         </Pressable>
-        {/*  */}
-
+        {/* COMMENT INPUT */}
         <View style={styles.formFieldWrapper}>
           <Text style={styles.inputLabel}>Comment</Text>
           <TextInput
@@ -79,6 +81,9 @@ const EntryAddForm: FC = () => {
             numberOfLines={4}
             style={[styles.inputField, styles.inputTextArea]}
           ></TextInput>
+        </View>
+        <View style={styles.addButtonWrapper}>
+          <Button text="Add new entry" onPress={() => console.log('submitForm')}></Button>
         </View>
       </View>
     </ScrollView>
@@ -109,8 +114,8 @@ const styles = StyleSheet.create({
   },
 
   inputField: {
-    paddingHorizontal: 6,
-    paddingVertical: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     borderRadius: 4,
     fontSize: 18,
     backgroundColor: '#fff',
@@ -166,5 +171,15 @@ const styles = StyleSheet.create({
   },
   hidden: {
     display: 'none',
+  },
+  addButtonWrapper: {
+    marginTop: 'auto',
+    paddingVertical: 24,
+  },
+  addButton: {
+    backgroundColor: colors.blue.base,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
