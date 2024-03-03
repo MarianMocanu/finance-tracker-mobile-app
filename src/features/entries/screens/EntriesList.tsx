@@ -15,6 +15,8 @@ const EntriesList: FC = () => {
   const navigation = useNavigation();
   const { data: entries, isLoading } = useEntries();
 
+  console.log({ entries, isLoading });
+
   function navigateToDetailedView(id: number): void {
     navigation.dispatch(
       CommonActions.navigate({
