@@ -1,18 +1,29 @@
-import { FC } from "react";
-import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from "react-native";
-import { colors } from "../../globals/style";
+import { FC, PropsWithChildren } from 'react';
+import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
+import { colors } from '../../globals/style';
 
-type Props = {
-  text: string;
+interface Props extends PropsWithChildren {
+  text?: string;
   onPress: () => void;
   style?: ViewStyle;
   textStyle?: TextStyle;
-};
+  primary?: boolean;
+  secondary?: boolean;
+}
 
-const Button: FC<Props> = ({ text, onPress, style, textStyle }) => {
+const Button: FC<Props> = ({ text, onPress, style, textStyle, children, primary, secondary }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
-      <Text style={[styles.text, textStyle]}>{text}</Text>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[primary && styles.primary, secondary && styles.secondary, style]}
+    >
+      {children ? (
+        children
+      ) : (
+        <Text style={[primary && styles.textPrimary, secondary && styles.textSecondary, textStyle]}>
+          {text}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };
@@ -20,16 +31,30 @@ const Button: FC<Props> = ({ text, onPress, style, textStyle }) => {
 export default Button;
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 46,
-    borderRadius: 46,
+  primary: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 48,
+    borderRadius: 48,
     backgroundColor: colors.blue.dark,
+    paddingHorizontal: 24,
   },
-  text: {
+  secondary: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 48,
+    borderRadius: 48,
+    backgroundColor: colors.blue.light,
+    paddingHorizontal: 24,
+  },
+  textPrimary: {
     fontSize: 16,
     lineHeight: 18,
-    color: "#FFF",
+    color: '#FFF',
+  },
+  textSecondary: {
+    fontSize: 16,
+    lineHeight: 18,
+    color: '#000',
   },
 });
