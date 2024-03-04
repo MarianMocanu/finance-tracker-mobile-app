@@ -23,7 +23,12 @@ const EntryAddForm: FC = () => {
       <SimpleModal visible={isDateModalVisible} closeModal={() => setIsDateModalVisible(false)}>
         <Text style={styles.modalHeader}>Select date</Text>
         <DateTimePicker mode="single" date={date} onChange={params => setDate(params.date)} />
-        <Button text="Confirm" onPress={() => setIsDateModalVisible(false)} />
+        <Button
+          primary
+          text="Confirm"
+          onPress={() => setIsDateModalVisible(false)}
+          style={styles.modalButton}
+        />
       </SimpleModal>
 
       <View style={styles.container}>
@@ -45,7 +50,7 @@ const EntryAddForm: FC = () => {
         <View style={styles.formFieldWrapper}>
           <Text style={styles.inputLabel}>Date</Text>
           <Picker
-            data={['DKK', 'USD', 'EURO']}
+            data={['DKK', 'USD', 'EUR']}
             onChange={setCurrency}
             initialSelectedIndex={0}
             placeholder="Currency"
@@ -132,45 +137,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text.light,
   },
-
-  modalWrapper: {
-    flex: 1,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
-    padding: 20,
-    backgroundColor: 'rgba(0,0,025,0.4)',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    zIndex: 100,
-  },
-  modalContent: {
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#fff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
   modalHeader: {
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 8,
+    alignSelf: 'center',
   },
-  closeModalButton: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-  },
-  visible: {
-    display: 'flex',
-  },
-  hidden: {
-    display: 'none',
+  modalButton: {
+    marginTop: 8,
   },
   addButtonWrapper: {
     marginTop: 'auto',

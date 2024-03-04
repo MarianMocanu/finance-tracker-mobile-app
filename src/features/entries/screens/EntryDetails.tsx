@@ -3,7 +3,7 @@ import { useEntry } from '@queries/Entries';
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { FC, useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-
+import dayjs from 'dayjs';
 type Props = {
   id: number;
 };
@@ -28,9 +28,9 @@ const EntryDetails: FC = (dispatch: any) => {
   }
 
   if (entry) {
-    console.log(entry);
     return (
       <View style={styles.container}>
+        <Text style={styles.header}>Entry Details</Text>
         <View style={styles.propertyWrapper}>
           <Text>ID</Text>
           <Text>{entry.id}</Text>
@@ -47,7 +47,7 @@ const EntryDetails: FC = (dispatch: any) => {
         </View>
         <View style={styles.propertyWrapper}>
           <Text>Date</Text>
-          <Text>{entry.date}</Text>
+          <Text>{dayjs(entry.date).format('DD/MM/YYYY')}</Text>
         </View>
         <View style={styles.propertyWrapper}>
           <Text>Comment</Text>
@@ -64,7 +64,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    padding: 20,
+    backgroundColor: '#fff',
   },
 
   text: {
@@ -82,7 +84,16 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderColor: colors.border,
+    width: '100%',
+    marginBottom: 12,
+    paddingVertical: 2,
+  },
+
+  header: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 24,
   },
 });

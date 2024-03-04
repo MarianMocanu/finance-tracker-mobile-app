@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 48,
     borderRadius: 48,
-    backgroundColor: colors.blue.dark,
+    backgroundColor: colors.blue.base,
     paddingHorizontal: 24,
   },
   secondary: {
