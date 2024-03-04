@@ -1,23 +1,17 @@
 import { colors } from '@globals/style';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { FC, useState } from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import DateTimePicker, { DateType } from 'react-native-ui-datepicker';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import DateTimePicker from 'react-native-ui-datepicker';
 import Button from '@shared/Button';
+import { SimpleModal } from '@shared/Modal';
+import { Picker } from '@shared/Picker';
 
 const EntryAddForm: FC = () => {
   // date set to any to resolve issue caused by dayjs format
   const [date, setDate] = useState<any>(dayjs());
   const [isDateModalVisible, setIsDateModalVisible] = useState(false);
+  const [currency, setCurrency] = useState('DKK');
 
   return (
     <ScrollView
@@ -26,19 +20,12 @@ const EntryAddForm: FC = () => {
       style={{ flex: 1 }}
       contentContainerStyle={{ flexGrow: 1 }}
     >
-      <View style={[styles.modalWrapper, isDateModalVisible ? styles.visible : styles.hidden]}>
-        <View style={styles.modalContent}>
-          <TouchableOpacity
-            style={styles.closeModalButton}
-            onPress={() => setIsDateModalVisible(false)}
-          >
-            <Ionicons name="close-circle" size={32} color={colors.border} />
-          </TouchableOpacity>
-          <Text style={styles.modalHeader}>Select date</Text>
-          <DateTimePicker mode="single" date={date} onChange={params => setDate(params.date)} />
-          <Button text="Confirm" onPress={() => setIsDateModalVisible(false)}></Button>
-        </View>
-      </View>
+      <SimpleModal visible={isDateModalVisible} closeModal={() => setIsDateModalVisible(false)}>
+        <Text style={styles.modalHeader}>Select date</Text>
+        <DateTimePicker mode="single" date={date} onChange={params => setDate(params.date)} />
+        <Button text="Confirm" onPress={() => setIsDateModalVisible(false)} />
+      </SimpleModal>
+
       <View style={styles.container}>
         {/* AMOUNT INPUT */}
         <View style={styles.formFieldWrapper}>
@@ -48,27 +35,34 @@ const EntryAddForm: FC = () => {
             placeholder="Amount"
             style={styles.inputField}
             value={'123'}
-          ></TextInput>
+          />
         </View>
         {/* CURRENCY INPUT WILL BE CHANGED TO DROPDOWN OF DKK/EUR/USD */}
-        <View style={styles.formFieldWrapper}>
+        {/* <View style={styles.formFieldWrapper}>
           <Text style={styles.inputLabel}>Currency</Text>
-          <TextInput
-            keyboardType="default"
+          <TextInput keyboardType="default" placeholder="Currency" style={styles.inputField} />
+        </View> */}
+        <View style={styles.formFieldWrapper}>
+          <Text style={styles.inputLabel}>Date</Text>
+          <Picker
+            data={['DKK', 'USD', 'EURO']}
+            onChange={setCurrency}
+            initialSelectedIndex={0}
             placeholder="Currency"
-            style={styles.inputField}
-          ></TextInput>
+            containerStyle={styles.inputField}
+          />
         </View>
         {/* DATE INPUT and MODAL HANDLER */}
         <Pressable onPress={() => setIsDateModalVisible(true)}>
           <View style={styles.formFieldWrapper} pointerEvents="none">
             <Text style={styles.inputLabel}>Date</Text>
+            {/* maybe you don't need a text input for the date, and just a simple Text component wrapped in a View styled as an inputFiled, check the Picker above for example */}
             <TextInput
               placeholder="Date"
               style={styles.inputField}
               value={date?.format('DD/MM/YYYY')}
               editable={false}
-            ></TextInput>
+            />
           </View>
         </Pressable>
         {/* COMMENT INPUT */}
@@ -80,11 +74,16 @@ const EntryAddForm: FC = () => {
             multiline
             numberOfLines={4}
             style={[styles.inputField, styles.inputTextArea]}
-          ></TextInput>
+          />
         </View>
-        <View style={styles.addButtonWrapper}>
-          <Button text="Add new entry" onPress={() => console.log('submitForm')}></Button>
-        </View>
+        {/* <View style={styles.addButtonWrapper}> */}
+        <Button
+          primary
+          text="Add new entry"
+          onPress={() => console.log('submitForm')}
+          style={styles.addButtonWrapper} // use this style prop to style the button instead of wrapping it in a view
+        />
+        {/* </View> */}
       </View>
     </ScrollView>
   );
@@ -121,6 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: colors.border,
+    height: 48,
   },
   inputTextArea: {
     height: 128,
@@ -174,7 +174,6 @@ const styles = StyleSheet.create({
   },
   addButtonWrapper: {
     marginTop: 'auto',
-    paddingVertical: 24,
   },
   addButton: {
     backgroundColor: colors.blue.base,

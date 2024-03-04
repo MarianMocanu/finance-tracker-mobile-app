@@ -26,12 +26,7 @@ const EntriesList: FC = () => {
   }
 
   function navigateToAddForm(): void {
-    navigation.dispatch(
-      CommonActions.navigate({
-        name: 'add-entry',
-        params: {},
-      }),
-    );
+    navigation.dispatch(CommonActions.navigate({ name: 'add-entry' }));
   }
 
   if (isLoading) {
@@ -43,7 +38,7 @@ const EntriesList: FC = () => {
   }
 
   return entries?.length ? (
-    <View style={styles.fullHeight}>
+    <View style={styles.container}>
       <TouchableOpacity style={styles.addButton} onPress={() => navigateToAddForm()}>
         <Ionicons name="add-circle" size={40} color={colors.blue.base} />
       </TouchableOpacity>
@@ -89,18 +84,11 @@ const styles = StyleSheet.create({
     padding: 12,
     paddingTop: 8,
   },
-
   center: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-
-  fullHeight: {
-    flex: 1,
-    position: 'relative',
-  },
-
   addButton: {
     position: 'absolute',
     bottom: 12,
