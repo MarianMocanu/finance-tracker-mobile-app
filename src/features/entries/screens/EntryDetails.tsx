@@ -31,7 +31,28 @@ const EntryDetails: FC = (dispatch: any) => {
     console.log(entry);
     return (
       <View style={styles.container}>
-        <Text>{entry.amount}</Text>
+        <View style={styles.propertyWrapper}>
+          <Text>ID</Text>
+          <Text>{entry.id}</Text>
+        </View>
+        <View style={styles.propertyWrapper}>
+          <Text>Name</Text>
+          <Text>{entry.name}</Text>
+        </View>
+        <View style={styles.propertyWrapper}>
+          <Text>Amount</Text>
+          <Text>
+            {entry.amount} {entry.currency}
+          </Text>
+        </View>
+        <View style={styles.propertyWrapper}>
+          <Text>Date</Text>
+          <Text>{entry.date}</Text>
+        </View>
+        <View style={styles.propertyWrapper}>
+          <Text>Comment</Text>
+          <Text>{entry.comment}</Text>
+        </View>
       </View>
     );
   }
@@ -55,5 +76,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  propertyWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomWidth: 2,
+    borderColor: colors.border,
   },
 });
