@@ -9,7 +9,7 @@ import AuthStackNavigator from './navigation/AuthStackNavigator';
 
 export const Main: FC = () => {
   const auth = useSelector((state: RootState) => state.auth);
-  const dispatch = useDispatch<AppDispatch>();
+  console.log(JSON.stringify(auth, null, 2));
 
   return (
     <View style={styles.container}>

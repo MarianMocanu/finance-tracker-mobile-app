@@ -5,7 +5,19 @@ import AccountNavigator from '../features/account/AccountStackNavigator';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import CategoriesNavigator from '../features/categories/CategoriesStackNavigator';
 
-const Tab = createBottomTabNavigator();
+export type TabsParamList = {
+  entries: {
+    type: 'add' | 'edit' | 'view' | 'list';
+    id: number;
+  };
+  categories: {
+    type: 'add' | 'edit' | 'view' | 'list';
+    id: number;
+  };
+  profile: undefined;
+};
+
+const Tab = createBottomTabNavigator<TabsParamList>();
 
 export default function TabNavigator() {
   return (
