@@ -19,7 +19,7 @@ const CategoriesList: FC = () => {
   function navigateToDetailedView(id: number): void {
     navigation.dispatch(
       CommonActions.navigate({
-        name: 'Back to all categories',
+        name: 'view-category',
         params: { id },
       }),
     );
