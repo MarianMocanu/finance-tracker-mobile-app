@@ -1,11 +1,9 @@
 import { colors } from '@globals/style';
 import { useEntry } from '@queries/Entries';
 
-import { RouteProp, useRoute } from '@react-navigation/native';
-import { FC } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { RouteProp } from '@react-navigation/native';
 import { useCategories } from '@queries/Categories';
-import { CommonActions, NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import { FC, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -18,7 +16,7 @@ import { EntriesStackParamList } from '../EntriesStackNavigator';
 const EntryDetails: FC = () => {
   const route = useRoute<RouteProp<EntriesStackParamList, 'view-entry'>>();
   const navigation = useNavigation<NavigationProp<EntriesStackParamList, 'view-entry'>>();
-  
+
   const { data: entry, isLoading } = useEntry(route.params.id);
   const { data: categories } = useCategories();
   const { isLoading: isDeleting, mutate: deleteEntry, isSuccess: isDeleteSuccess } = useDeleteEntry(route.params.id);
