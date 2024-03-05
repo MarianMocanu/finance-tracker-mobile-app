@@ -1,7 +1,8 @@
-import { Dispatch, PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { RootState } from 'src/app/store';
-import axios from '@services/axios';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import axios, { setToken } from '@services/axios';
 import { User } from 'src/models/User';
+import { deleteToken, getToken, saveToken } from 'src/app/util';
+import { AppDispatch } from 'src/app/store';
 
 export interface AuthState {
   isLoggedIn: boolean;
@@ -19,20 +20,28 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    signupRequest: (state: AuthState) => {
+    request: (state: AuthState) => {
       state.status = 'loading';
     },
-    signupSuccess: (state: AuthState, action: PayloadAction<User>) => {
+    signupSuccess: (state: AuthState) => {
+      state.status = 'succeeded';
+    },
+    loginSuccess: (state: AuthState, action: PayloadAction<User>) => {
       state.isLoggedIn = true;
       state.user = action.payload;
       state.status = 'succeeded';
     },
-    signupFailure: (state: AuthState) => {
+    failure: (state: AuthState) => {
       state.isLoggedIn = false;
       state.user = null;
       state.status = 'failed';
     },
-    signupIdle: (state: AuthState) => {
+    idle: (state: AuthState) => {
+      state.status = 'idle';
+    },
+    logout: (state: AuthState) => {
+      state.isLoggedIn = false;
+      state.user = null;
       state.status = 'idle';
     },
   },
@@ -44,20 +53,83 @@ type SignupPayload = {
   password: string;
 };
 
-export const signup = (payload: SignupPayload) => async (dispatch: Dispatch) => {
-  dispatch(signupRequest());
+export const signUp = (payload: SignupPayload) => async (dispatch: AppDispatch) => {
+  dispatch(request());
   try {
-    const response = await axios.post('/auth/signup', payload);
-    dispatch(signupSuccess(response.data));
+    const response = await axios.post<User>('/auth/signup', payload);
+    if (response.status === 201 && response.data.id) {
+      dispatch(signupSuccess());
+      dispatch(logIn({ email: payload.email, password: payload.password }));
+    } else {
+      throw new Error('Invalid response from server');
+    }
   } catch (error) {
-    dispatch(signupFailure());
+    dispatch(failure());
   } finally {
-    dispatch(signupIdle());
+    dispatch(idle());
   }
 };
 
-export const { signupRequest, signupFailure, signupSuccess, signupIdle } = authSlice.actions;
+type LoginPayload = {
+  email: string;
+  password: string;
+};
 
-export const selectIsLoggedIn = (state: RootState) => state.auth.isLoggedIn;
+type LoginResponse = {
+  user: User;
+  token: string;
+};
+
+export const logIn = (payload: LoginPayload) => async (dispatch: AppDispatch) => {
+  dispatch(request());
+  try {
+    const response = await axios.post<LoginResponse>('/auth/login', payload);
+    if (response.status === 200 && response.data.user && response.data.token) {
+      dispatch(loginSuccess(response.data.user));
+      // Save token to secure storage
+      await saveToken(response.data.token);
+      // Add token to axios instance headers
+      setToken(response.data.token);
+    } else {
+      throw new Error('Invalid response from server');
+    }
+  } catch (error) {
+    dispatch(failure());
+  } finally {
+    dispatch(idle());
+  }
+};
+
+// export const autoLogIn = () => async (dispatch: AppDispatch) => {
+//   dispatch(request());
+//   try {
+//     const token = await getToken();
+//     if (token) {
+//       setToken(token);
+//       const response = await axios.get<User>('/auth/me');
+//       if (response.status === 200 && response.data.id) {
+//         dispatch(loginSuccess(response.data));
+//       } else {
+//         throw new Error('Invalid response from server');
+//       }
+//     } else {
+//       throw new Error('No token found');
+//     }
+//   } catch (error) {
+//     dispatch(failure());
+//   } finally {
+//     dispatch(idle());
+//   }
+// }
+
+export const logOut = () => async (dispatch: AppDispatch) => {
+  // Delete token from secure storage
+  await deleteToken();
+  // Remove token from axios instance headers
+  setToken('');
+  dispatch(logout());
+};
+
+export const { request, signupSuccess, loginSuccess, failure, idle, logout } = authSlice.actions;
 
 export default authSlice.reducer;

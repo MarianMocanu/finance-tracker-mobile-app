@@ -5,7 +5,7 @@ import { FC, useState } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
-import { login } from '../authSlice';
+import { signin } from '../authSlice';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AuthStackParamList } from 'src/navigation/AuthStackNavigator';
 
@@ -45,7 +45,7 @@ export const LoginScreen: FC = () => {
   }
 
   function handleLogin(): void {
-    dispatch(login());
+    dispatch(signin());
   }
 
   function navigateToSignup(): void {

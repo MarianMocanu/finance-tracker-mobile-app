@@ -28,6 +28,8 @@ export default function TabNavigator() {
           switch (route.name) {
             case 'entries':
               return <Ionicons name="checkmark-circle-outline" size={25} color={color} />;
+            case 'categories':
+              return <Ionicons name="pricetag-outline" size={25} color={color} />;
             case 'profile':
               return <Ionicons name="person-circle-outline" size={25} color={color} />;
           }
