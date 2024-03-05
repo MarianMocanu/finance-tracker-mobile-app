@@ -5,4 +5,5 @@ export type Entry = {
   currency: string;
   name: string;
   comment?: string;
+  categoryId: number;
 };

@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 48,
     borderRadius: 48,
-    backgroundColor: colors.blue.dark,
+    backgroundColor: colors.blue.base,
     paddingHorizontal: 24,
   },
   secondary: {
@@ -44,8 +44,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 48,
     borderRadius: 48,
-    backgroundColor: colors.blue.light,
+    backgroundColor: '#fff',
     paddingHorizontal: 24,
+    borderColor: colors.blue.base,
+    borderWidth: 1,
   },
   textPrimary: {
     fontSize: 16,
@@ -55,6 +57,6 @@ const styles = StyleSheet.create({
   textSecondary: {
     fontSize: 16,
     lineHeight: 18,
-    color: '#000',
+    color: colors.blue.base,
   },
 });

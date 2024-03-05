@@ -1,10 +1,10 @@
-import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import EntriesNavigator from "../features/entries/EntriesStackNavigator";
-import AccountNavigator from "../features/account/AccountStackNavigator";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import CategoriesNavigator from "../features/categories/CategoriesStackNavigator";
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import EntriesNavigator from '../features/entries/EntriesStackNavigator';
+import AccountNavigator from '../features/account/AccountStackNavigator';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import CategoriesNavigator from '../features/categories/CategoriesStackNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,10 +16,12 @@ export default function TabNavigation() {
           headerShown: false,
           tabBarIcon: ({ focused, color, size }) => {
             switch (route.name) {
-              case "entries":
-                return <Ionicons name="checkmark-circle-outline" size={25} color={color} />;
-              case "profile":
-                return <Ionicons name="person-circle-outline" size={25} color={color} />;
+              case 'entries':
+                return <Ionicons name="cash" size={25} color={color} />;
+              case 'categories':
+                return <Ionicons name="layers" size={25} color={color} />;
+              case 'profile':
+                return <Ionicons name="person-circle" size={25} color={color} />;
             }
           },
         })}
