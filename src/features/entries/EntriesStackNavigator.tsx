@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import EntriesList from './screens/EntriesList';
 import EntryDetails from './screens/EntryDetails';
 import EntryAddForm from './screens/EntryAddForm';
+import EntryEditForm from './screens/EntryEditForm';
 
 type EntriesStackParamList = {
   'entries-list': undefined;
@@ -20,7 +21,7 @@ function EntriesNavigator() {
       <Stack.Screen name="entries-list" component={EntriesList} />
       <Stack.Screen name="view-entry" component={EntryDetails} />
       <Stack.Screen name="add-entry" component={EntryAddForm} />
-
+      <Stack.Screen name="edit-entry" component={EntryEditForm} />
       {/* <Stack.Screen name='add-entry' component={EntriesListScreen} />
       <Stack.Screen name='edit-entry' component={EntriesListScreen} />
       <Stack.Screen name='delete-entry' component={EntriesListScreen} /> */}

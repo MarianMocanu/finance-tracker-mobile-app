@@ -28,6 +28,15 @@ const EntryDetails: FC = (dispatch: any) => {
     );
   }
 
+  function navigateToEditView(id: number): void {
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'edit-entry',
+        params: { id },
+      }),
+    );
+  }
+
   if (isLoading) {
     return (
       <View style={styles.center}>
@@ -85,7 +94,7 @@ const EntryDetails: FC = (dispatch: any) => {
           {/* DELETION SUCCESSFUL */}
           {isDeleteSuccess && (
             <View style={styles.modalContentWrapper}>
-              <Text style={styles.modalText}>DELETED SUCCESSFULLY</Text>
+              <Text style={[styles.header, { marginBottom: 20 }]}>ENTRY DELETED SUCCESSFULLY</Text>
               <Button
                 primary
                 text="Back to list view"
@@ -103,7 +112,7 @@ const EntryDetails: FC = (dispatch: any) => {
             <Ionicons name="trash-outline" size={24} color={colors.blue.base} />
           </TouchableOpacity>
           <Text style={styles.header}>Entry Details</Text>
-          <TouchableOpacity style={styles.editButton} onPress={() => console.log('test')}>
+          <TouchableOpacity style={styles.editButton} onPress={() => navigateToEditView(entry.id)}>
             <Ionicons name="create-outline" size={24} color={colors.blue.base} />
           </TouchableOpacity>
         </View>
@@ -239,4 +248,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
+
+  deleteMessage: { marginBottom: 20 },
 });
