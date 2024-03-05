@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: 'absolute',
-    bottom: 12,
-    right: 12,
+    bottom: 0,
+    right: 0,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
