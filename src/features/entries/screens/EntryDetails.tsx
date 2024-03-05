@@ -1,33 +1,28 @@
 import { colors } from '@globals/style';
 import { useEntry } from '@queries/Entries';
 import { useCategories } from '@queries/Categories';
-import { CommonActions, useNavigation, useNavigationState } from '@react-navigation/native';
-import { FC, useEffect, useState } from 'react';
+import { CommonActions, NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { FC, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import dayjs from 'dayjs';
 import { SimpleModal } from '@shared/Modal';
 import Button from '@shared/Button';
 import { useDeleteEntry } from 'src/mutations/Entries';
+import { EntriesStackParamList } from '../EntriesStackNavigator';
 
-const EntryDetails: FC = (dispatch: any) => {
-  const { data: entry, isLoading } = useEntry(dispatch.route.params.id);
+const EntryDetails: FC = () => {
+  const route = useRoute<RouteProp<EntriesStackParamList, 'view-entry'>>();
+  const navigation = useNavigation<NavigationProp<EntriesStackParamList, 'view-entry'>>();
+
+  const { data: entry, isLoading } = useEntry(route.params.id);
   const { data: categories } = useCategories();
-  const {
-    isLoading: isDeleting,
-    mutate: deleteEntry,
-    isSuccess: isDeleteSuccess,
-  } = useDeleteEntry(dispatch.route.params.id);
+  const { isLoading: isDeleting, mutate: deleteEntry, isSuccess: isDeleteSuccess } = useDeleteEntry(route.params.id);
+
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
-  const navigation = useNavigation();
-
   function navigateToListView(): void {
-    navigation.dispatch(
-      CommonActions.navigate({
-        name: 'entries-list',
-      }),
-    );
+    navigation.navigate('entries-list');
   }
 
   if (isLoading) {
@@ -52,9 +47,7 @@ const EntryDetails: FC = (dispatch: any) => {
         {/* DELETE MODAL */}
         <SimpleModal
           visible={isDeleteModalVisible}
-          closeModal={() =>
-            isDeleteSuccess ? navigateToListView() : setIsDeleteModalVisible(false)
-          }
+          closeModal={() => (isDeleteSuccess ? navigateToListView() : setIsDeleteModalVisible(false))}
         >
           {/* DELETION IN PROGRESS */}
           {isDeleting && (
@@ -71,16 +64,8 @@ const EntryDetails: FC = (dispatch: any) => {
               </View>
               <Text style={styles.modalText}>Are you sure you want to delete this entry?</Text>
               <View style={styles.modalButtonWrapper}>
-                <Button
-                  primary
-                  text="Cancel"
-                  onPress={() => setIsDeleteModalVisible(false)}
-                ></Button>
-                <Button
-                  secondary
-                  text="Delete"
-                  onPress={() => deleteEntry(dispatch.route.params.id)}
-                ></Button>
+                <Button primary text="Cancel" onPress={() => setIsDeleteModalVisible(false)}></Button>
+                <Button secondary text="Delete" onPress={() => deleteEntry(route.params.id)}></Button>
               </View>
             </View>
           )}
@@ -88,20 +73,13 @@ const EntryDetails: FC = (dispatch: any) => {
           {isDeleteSuccess && (
             <View style={styles.modalContentWrapper}>
               <Text style={styles.modalText}>DELETED SUCCESSFULLY</Text>
-              <Button
-                primary
-                text="Back to list view"
-                onPress={() => navigateToListView()}
-              ></Button>
+              <Button primary text="Back to list view" onPress={() => navigateToListView()}></Button>
             </View>
           )}
         </SimpleModal>
         {/* HEADER */}
         <View style={styles.headerWrapper}>
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => setIsDeleteModalVisible(true)}
-          >
+          <TouchableOpacity style={styles.deleteButton} onPress={() => setIsDeleteModalVisible(true)}>
             <Ionicons name="trash-outline" size={24} color={colors.blue.base} />
           </TouchableOpacity>
           <Text style={styles.header}>Entry Details</Text>

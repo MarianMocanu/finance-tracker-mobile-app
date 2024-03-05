@@ -7,26 +7,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { colors } from '@globals/style';
 import { useCategories } from '@queries/Categories';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { CategoriesStackParamList } from '../CategoriesStackNavigator';
 
 const CategoriesList: FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<CategoriesStackParamList, 'categories-list'>>();
   const { data: categories, isLoading } = useCategories();
 
   function navigateToDetailedView(id: number): void {
-    navigation.dispatch(
-      CommonActions.navigate({
-        name: 'view-category',
-        params: { id },
-      }),
-    );
+    navigation.navigate('view-category', { id });
   }
 
   function navigateToAddForm(): void {
-    navigation.dispatch(CommonActions.navigate({ name: 'add-category' }));
+    navigation.navigate('add-category');
   }
 
   if (isLoading) {

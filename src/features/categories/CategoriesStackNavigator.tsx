@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CategoriesList from '../categories/screens/CategoriesList';
 import CategoryDetails from '../categories/screens/CategoryDetails';
 
-type CategoriesStackParamList = {
+export type CategoriesStackParamList = {
   'categories-list': undefined;
   'view-category': { id: number };
   'add-category': undefined;

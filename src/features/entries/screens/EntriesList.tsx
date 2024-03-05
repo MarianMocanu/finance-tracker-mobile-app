@@ -1,32 +1,21 @@
 import React, { FC, useEffect } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import { colors } from '@globals/style';
 import { useEntries } from '@queries/Entries';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { EntriesStackParamList } from '../EntriesStackNavigator';
 
 const EntriesList: FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<EntriesStackParamList, 'entries-list'>>();
   const { data: entries, isLoading } = useEntries();
 
   function navigateToDetailedView(id: number): void {
-    navigation.dispatch(
-      CommonActions.navigate({
-        name: 'view-entry',
-        params: { id },
-      }),
-    );
+    navigation.navigate('view-entry', { id });
   }
 
   function navigateToAddForm(): void {
-    navigation.dispatch(CommonActions.navigate({ name: 'add-entry' }));
+    navigation.navigate('add-entry');
   }
 
   if (isLoading) {

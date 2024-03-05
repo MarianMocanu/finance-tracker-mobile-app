@@ -1,32 +1,22 @@
 import { colors } from '@globals/style';
 import { useCategory } from '@queries/Categories';
 import { useEntriesForCategory } from '@queries/Entries';
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { CommonActions, NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { FC } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { CategoriesStackParamList } from '../CategoriesStackNavigator';
+import { EntriesStackParamList } from 'src/features/entries/EntriesStackNavigator';
 
-const CategoryDetails: FC = (dispatch: any) => {
-  const { data: category, isLoading } = useCategory(dispatch.route.params.id);
-  const { data: categoryEntries, isLoading: isLoadingEntries } = useEntriesForCategory(
-    dispatch.route.params.id,
-  );
-  const navigation = useNavigation();
+const CategoryDetails: FC = () => {
+  const route = useRoute<RouteProp<CategoriesStackParamList, 'view-category'>>();
+  const navigation = useNavigation<NavigationProp<EntriesStackParamList>>();
+
+  const { data: category, isLoading } = useCategory(route.params.id);
+  const { data: categoryEntries, isLoading: isLoadingEntries } = useEntriesForCategory(route.params.id);
 
   function navigateToDetailedView(id: number): void {
-    navigation.dispatch(
-      CommonActions.navigate({
-        name: 'view-entry',
-        params: { id },
-      }),
-    );
+    navigation.navigate('view-entry', { id });
   }
 
   if (isLoading && isLoadingEntries) {
@@ -61,9 +51,7 @@ const CategoryDetails: FC = (dispatch: any) => {
         {categoryEntries && categoryEntries?.length > 0 && (
           <FlatList
             style={styles.list}
-            data={
-              categoryEntries && categoryEntries.filter(entry => entry.categoryId === category.id)
-            }
+            data={categoryEntries && categoryEntries.filter(entry => entry.categoryId === category.id)}
             keyExtractor={item => `entry-${item.id.toString()}`}
             renderItem={({ item }) => (
               <TouchableOpacity style={styles.card} onPress={() => navigateToDetailedView(item.id)}>
