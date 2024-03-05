@@ -6,13 +6,17 @@ import { Calendar } from 'react-native-calendars';
 import Button from '@shared/Button';
 import { SimpleModal } from '@shared/Modal';
 import { Picker } from '@shared/Picker';
-import { useAddEntry } from 'src/mutations/Entries';
+import { useUpdateEntry } from 'src/mutations/Entries';
 import { Entry } from '@models';
 import Input from '@shared/Input';
 import Toast from 'react-native-toast-message';
 import { useEntry } from '@queries/Entries';
 const EntryEditForm: FC = (dispatch: any) => {
-  const { data: entry, isLoading: isEntryDataLoading } = useEntry(dispatch.route.params.id);
+  const {
+    data: entry,
+    isLoading: isEntryDataLoading,
+    refetch,
+  } = useEntry(dispatch.route.params.id);
 
   const [isDateModalVisible, setIsDateModalVisible] = useState(false);
   const [formData, setFormData] = useState<Entry>({
@@ -20,24 +24,38 @@ const EntryEditForm: FC = (dispatch: any) => {
     name: '',
     amount: 0,
     currency: 'DKK',
-    date: dayjs().toISOString().slice(0, 10),
+    date: dayjs().toISOString().slice(0, 19),
     comment: '',
     categoryId: undefined,
   });
-  const { isLoading, mutate, isSuccess, isError } = useAddEntry(formData);
+  const { isLoading, mutate, isSuccess, isError } = useUpdateEntry(formData);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
+  const [markedDate, setMarkedDate] = useState('');
+
+  const currencies = ['DKK', 'USD', 'EUR'];
 
   const numRegex = /^(0|[1-9][0-9]*)$/;
+
+  const processDate = (date: string) => {
+    const MyDate = new Date(date);
+    // returns date converted to a format 'edible by calendar marker (ISO TIMEZONE SHENANIGANS)'
+    return `${MyDate.getFullYear()}-${('0' + (MyDate.getMonth() + 1)).slice(-2)}-${(
+      '0' + MyDate.getDate()
+    ).slice(-2)}`;
+  };
 
   useEffect(() => {
     if (!isLoading && entry) {
       setFormData(entry);
     }
-  }, [isLoading]);
+  }, [isLoading, entry]);
 
-  //   const submitForm = () => {
-  //     mutate(formData);
-  //   };
+  const submitForm = () => {
+    mutate(formData);
+    if (isSuccess && !isLoading) {
+      refetch();
+    }
+  };
 
   //   useEffect(() => {
   //     if (isSuccess) {
@@ -93,10 +111,9 @@ const EntryEditForm: FC = (dispatch: any) => {
     },
     date: (value: string) => {
       if (value) {
-        const convertedValue = new Date(value.toString());
         setFormData(prevState => ({
           ...prevState,
-          date: convertedValue.toISOString(),
+          date: new Date(value).toISOString().slice(0, 19),
         }));
       }
     },
@@ -137,7 +154,7 @@ const EntryEditForm: FC = (dispatch: any) => {
     },
   };
 
-  if (isLoading) {
+  if (isLoading || isEntryDataLoading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={colors.blue.dark} />
@@ -156,9 +173,11 @@ const EntryEditForm: FC = (dispatch: any) => {
           <SimpleModal visible={isDateModalVisible} closeModal={() => setIsDateModalVisible(false)}>
             <Text style={styles.modalHeader}>Select date</Text>
             <Calendar
-              onDayPress={value => setters.date(value.dateString)}
+              onDayPress={value => {
+                setters.date(value.dateString);
+              }}
               markedDates={{
-                [formData.date.slice(0, 10)]: {
+                [processDate(formData.date)]: {
                   selected: true,
                   disableTouchEvent: true,
                 },
@@ -211,11 +230,11 @@ const EntryEditForm: FC = (dispatch: any) => {
               />
             </View>
             <View style={styles.formFieldWrapper}>
-              <Text style={styles.inputLabel}>Date</Text>
+              <Text style={styles.inputLabel}>Currency</Text>
               <Picker
-                data={['DKK', 'USD', 'EUR']}
+                data={currencies}
                 onChange={setters.currency}
-                initialSelectedIndex={0}
+                initialSelectedIndex={currencies.indexOf(entry.currency)}
                 placeholder="Currency"
                 containerStyle={styles.inputField}
               />
@@ -228,7 +247,7 @@ const EntryEditForm: FC = (dispatch: any) => {
                 <Input
                   placeholder="Date"
                   style={styles.inputField}
-                  value={formData.date.slice(0, 10)}
+                  value={dayjs(formData.date).format('YYYY-MM-DD')}
                   editable={false}
                 />
               </View>
@@ -254,7 +273,7 @@ const EntryEditForm: FC = (dispatch: any) => {
             <Button
               primary
               text="Save changes"
-              onPress={() => console.log('save')}
+              onPress={() => submitForm()}
               style={styles.addButtonWrapper} // use this style prop to style the button instead of wrapping it in a view
             />
           </View>

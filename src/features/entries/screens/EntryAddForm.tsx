@@ -18,7 +18,7 @@ const EntryAddForm: FC = () => {
     name: '',
     amount: 0,
     currency: 'DKK',
-    date: dayjs().toISOString().slice(0, 10),
+    date: new Date().toISOString(),
     comment: '',
     categoryId: undefined,
   });
@@ -37,7 +37,7 @@ const EntryAddForm: FC = () => {
         name: '',
         amount: 0,
         currency: 'DKK',
-        date: dayjs().toISOString().slice(0, 10),
+        date: new Date().toISOString(),
         comment: '',
         categoryId: undefined,
       });
@@ -85,7 +85,7 @@ const EntryAddForm: FC = () => {
     },
     date: (value: string) => {
       if (value) {
-        const convertedValue = new Date(value.toString());
+        const convertedValue = new Date(value);
         setFormData(prevState => ({
           ...prevState,
           date: convertedValue.toISOString(),
@@ -141,7 +141,7 @@ const EntryAddForm: FC = () => {
           <Calendar
             onDayPress={value => setters.date(value.dateString)}
             markedDates={{
-              [formData.date.slice(0, 10)]: {
+              [new Date(formData.date).toISOString().slice(0, 10)]: {
                 selected: true,
                 disableTouchEvent: true,
               },
@@ -194,7 +194,7 @@ const EntryAddForm: FC = () => {
             />
           </View>
           <View style={styles.formFieldWrapper}>
-            <Text style={styles.inputLabel}>Date</Text>
+            <Text style={styles.inputLabel}>Currency</Text>
             <Picker
               data={['DKK', 'USD', 'EUR']}
               onChange={setters.currency}
