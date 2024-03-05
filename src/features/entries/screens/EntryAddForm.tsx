@@ -2,7 +2,7 @@ import { colors } from '@globals/style';
 import dayjs from 'dayjs';
 import { FC, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import DateTimePicker from 'react-native-ui-datepicker';
+import { Calendar } from 'react-native-calendars';
 import Button from '@shared/Button';
 import { SimpleModal } from '@shared/Modal';
 import { Picker } from '@shared/Picker';
@@ -13,31 +13,62 @@ const EntryAddForm: FC = () => {
   // date set to any to resolve issue caused by dayjs format
 
   const [isDateModalVisible, setIsDateModalVisible] = useState(false);
-  const [name, setName] = useState('');
-  const [amount, setAmount] = useState(0);
-  const [currency, setCurrency] = useState('DKK');
-  const [date, setDate] = useState<any>(dayjs());
-  const [comment, setComment] = useState('');
-  const [formData, setFormData] = useState<Omit<Entry, 'id'>>();
+  const [date, setDate] = useState(dayjs());
+  const [formData, setFormData] = useState<Omit<Entry, 'id'>>({
+    name: '',
+    amount: 0,
+    currency: 'DKK',
+    date: dayjs().toISOString().slice(0, 10),
+    comment: '',
+    categoryId: undefined,
+  });
   const { isLoading, mutate, isSuccess } = useAddEntry(formData);
 
   const submitForm = () => {
-    console.log('name:', name);
-    console.log('amount:', amount);
-    console.log('currency:', currency);
-    console.log('date:', date);
-    console.log('comment:', comment);
+    mutate(formData);
+  };
 
-    setFormData({
-      name: name,
-      amount: amount,
-      currency: currency,
-      date: date,
-      comment: comment,
-      categoryId: 1,
-    });
-
-    useAddEntry(formData);
+  const setters = {
+    name: (value: string) => {
+      setFormData(prevState => ({
+        ...prevState,
+        name: value,
+      }));
+    },
+    amount: (value: string) => {
+      if (value.length === 0) {
+        setFormData(prevState => ({
+          ...prevState,
+          amount: 0,
+        }));
+      } else {
+        setFormData(prevState => ({
+          ...prevState,
+          amount: parseInt(value),
+        }));
+      }
+    },
+    currency: (value: string) => {
+      setFormData(prevState => ({
+        ...prevState,
+        currency: value,
+      }));
+    },
+    date: (value: string) => {
+      if (value) {
+        const convertedValue = new Date(value.toString());
+        setFormData(prevState => ({
+          ...prevState,
+          date: convertedValue.toISOString(),
+        }));
+      }
+    },
+    comment: (value: string) => {
+      setFormData(prevState => ({
+        ...prevState,
+        comment: value,
+      }));
+    },
   };
 
   return (
@@ -49,7 +80,20 @@ const EntryAddForm: FC = () => {
     >
       <SimpleModal visible={isDateModalVisible} closeModal={() => setIsDateModalVisible(false)}>
         <Text style={styles.modalHeader}>Select date</Text>
-        <DateTimePicker mode="single" date={date} onChange={params => setDate(params.date)} />
+        <Calendar
+          onDayPress={value => setters.date(value.dateString)}
+          markedDates={{
+            [formData.date.slice(0, 10)]: {
+              selected: true,
+              disableTouchEvent: true,
+            },
+          }}
+          theme={{
+            selectedDayBackgroundColor: colors.blue.base,
+            selectedDotColor: colors.blue.base,
+            todayTextColor: colors.blue.base,
+          }}
+        />
         <Button
           primary
           text="Confirm"
@@ -66,9 +110,9 @@ const EntryAddForm: FC = () => {
             keyboardType="default"
             placeholder="Entry name"
             style={styles.inputField}
-            value={name}
+            value={formData.name}
             onChangeText={value => {
-              setName(value);
+              setters.name(value);
             }}
           />
         </View>
@@ -78,11 +122,9 @@ const EntryAddForm: FC = () => {
             keyboardType="numeric"
             placeholder="Amount"
             style={styles.inputField}
-            value={amount.toString()}
+            value={formData.amount.toString()}
             onChangeText={value => {
-              if (value.length === 0) {
-                setAmount(0);
-              } else setAmount(parseInt(value));
+              setters.amount(value);
             }}
           />
         </View>
@@ -90,7 +132,7 @@ const EntryAddForm: FC = () => {
           <Text style={styles.inputLabel}>Date</Text>
           <Picker
             data={['DKK', 'USD', 'EUR']}
-            onChange={setCurrency}
+            onChange={setters.currency}
             initialSelectedIndex={0}
             placeholder="Currency"
             containerStyle={styles.inputField}
@@ -104,7 +146,7 @@ const EntryAddForm: FC = () => {
             <TextInput
               placeholder="Date"
               style={styles.inputField}
-              value={date?.format('DD/MM/YYYY')}
+              value={formData.date.slice(0, 10)}
               editable={false}
             />
           </View>
@@ -118,7 +160,7 @@ const EntryAddForm: FC = () => {
             multiline
             numberOfLines={4}
             onChangeText={value => {
-              setComment(value);
+              setters.comment(value);
             }}
             style={[styles.inputField, styles.inputTextArea]}
           />
