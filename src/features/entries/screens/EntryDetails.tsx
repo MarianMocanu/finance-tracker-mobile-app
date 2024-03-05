@@ -1,7 +1,9 @@
 import { colors } from '@globals/style';
 import { useEntry } from '@queries/Entries';
+
+import { RouteProp } from '@react-navigation/native';
 import { useCategories } from '@queries/Categories';
-import { CommonActions, NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import { FC, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';

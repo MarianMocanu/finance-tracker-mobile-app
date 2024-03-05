@@ -1,14 +1,13 @@
 import { colors } from '@globals/style';
 import Button from '@shared/Button';
 import Input from '@shared/Input';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
-
-import { signUp } from '../authSlice';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { AuthStackParamList } from 'src/navigation/AuthStackNavigator';
+import { logIn } from '../authSlice';
 
 interface InputField {
   value: string;
@@ -18,23 +17,21 @@ interface InputField {
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-export const SignupScreen: FC = () => {
-  const navigation = useNavigation<NavigationProp<AuthStackParamList, 'signup'>>();
+export const LoginScreen: FC = () => {
+  const navigation = useNavigation<NavigationProp<AuthStackParamList, 'login'>>();
+  const route = useRoute<RouteProp<AuthStackParamList, 'login'>>();
   const dispatch = useDispatch<AppDispatch>();
 
-  const [name, setName] = useState<InputField>({ value: '', valid: false, blurred: false });
-  const [email, setEmail] = useState<InputField>({ value: '', valid: false, blurred: false });
-  const [password, setPassword] = useState<InputField>({ value: '', valid: false, blurred: false });
-
-  function handleNameChange(text: string): void {
-    setName({ value: text, valid: text.length >= 3, blurred: false });
-  }
-
-  function handleNameBlur(): void {
-    setName(prevState => {
-      return { ...prevState, blurred: true };
-    });
-  }
+  const [email, setEmail] = useState<InputField>({
+    value: '',
+    valid: false,
+    blurred: false,
+  });
+  const [password, setPassword] = useState<InputField>({
+    value: '',
+    valid: false,
+    blurred: false,
+  });
 
   function handleEmailChange(text: string): void {
     setEmail({ value: text, valid: emailRegex.test(email.value), blurred: false });
@@ -56,24 +53,30 @@ export const SignupScreen: FC = () => {
     });
   }
 
-  async function handleSignup(): Promise<void> {
-    const user = { name: name.value, email: email.value, password: password.value };
-    await dispatch(signUp(user));
-    navigation.navigate('login', { email: email.value, password: password.value });
+  function handleLogin(email: string, password: string): void {
+    dispatch(logIn({ email, password }));
   }
+
+  function navigateToSignup(): void {
+    navigation.navigate('signup');
+  }
+
+  useEffect(() => {
+    if (route.params && route.params.email && route.params.password) {
+      handleLogin(route.params.email, route.params.password);
+    }
+  }, [route.params]);
 
   return (
     <ScrollView
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
       automaticallyAdjustKeyboardInsets
-      scrollEnabled={false}
     >
-      <Input
-        style={[styles.input, name.blurred && (name.valid ? styles.valid : styles.error)]}
-        placeholder="Full Name"
-        onChangeText={handleNameChange}
-        onBlur={handleNameBlur}
+      <Button
+        text="New user? Create account here"
+        onPress={navigateToSignup}
+        style={styles.signup}
       />
       <Input
         style={[styles.input, email.blurred && (email.valid ? styles.valid : styles.error)]}
@@ -88,11 +91,11 @@ export const SignupScreen: FC = () => {
         onBlur={handlePasswordBlur}
       />
       <Button
-        text="Create account"
-        onPress={handleSignup}
+        text="Login"
+        onPress={() => handleLogin(email.value, password.value)}
         primary
         style={styles.button}
-        disabled={!email.valid || !password.valid || !name.valid}
+        disabled={!email.valid || !password.valid}
       />
     </ScrollView>
   );
