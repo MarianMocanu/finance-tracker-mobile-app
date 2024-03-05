@@ -2,7 +2,10 @@ import { colors } from '@globals/style';
 import Button from '@shared/Button';
 import Input from '@shared/Input';
 import { FC, useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from 'src/app/store';
+import { login } from '../authSlice';
 
 interface InputField {
   value: string;
@@ -13,6 +16,8 @@ interface InputField {
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const LoginScreen: FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const [email, setEmail] = useState<InputField>({ value: '', valid: false, blurred: false });
   const [password, setPassword] = useState<InputField>({ value: '', valid: false, blurred: false });
 
@@ -36,7 +41,9 @@ export const LoginScreen: FC = () => {
     });
   }
 
-  function login(): void {}
+  function handleLogin(): void {
+    dispatch(login());
+  }
 
   return (
     <ScrollView
@@ -45,20 +52,20 @@ export const LoginScreen: FC = () => {
       keyboardShouldPersistTaps="handled"
     >
       <Input
-        style={[styles.input, !email.valid && email.blurred ? styles.error : styles.valid]}
+        style={[styles.input, email.blurred && (email.valid ? styles.valid : styles.error)]}
         placeholder="Email"
         onChangeText={handleEmailChange}
         onBlur={handleEmailBlurr}
       />
       <Input
-        style={[styles.input, !password.valid && password.blurred ? styles.error : styles.valid]}
+        style={[styles.input, password.blurred && (password.valid ? styles.valid : styles.error)]}
         placeholder="Password"
         onChangeText={handlePasswordChange}
         onBlur={handlePasswordBlurr}
       />
       <Button
         text="Login"
-        onPress={login}
+        onPress={handleLogin}
         primary
         style={styles.button}
         disabled={!email.valid || !password.valid}
@@ -70,15 +77,16 @@ export const LoginScreen: FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-end',
     paddingHorizontal: 20,
+    marginBottom: 100,
   },
   input: {
     marginVertical: 10,
   },
   button: {
     width: '100%',
+    marginVertical: 10,
   },
   valid: {
     borderColor: colors.blue.dark,

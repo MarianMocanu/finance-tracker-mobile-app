@@ -16,11 +16,14 @@ export const authSlice = createSlice({
     login: (state: AuthState) => {
       state.isLoggedIn = true;
     },
+    logout: (state: AuthState) => {
+      state.isLoggedIn = false;
+    },
   },
   extraReducers: builder => {},
 });
 
-export const { login } = authSlice.actions;
+export const { login, logout } = authSlice.actions;
 
 export const selectIsLoggedIn = (state: RootState) => state.auth.isLoggedIn;
 

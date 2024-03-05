@@ -31,6 +31,7 @@ const Button: FC<Props> = ({
         style,
         disabled && { opacity: 0.5 },
       ]}
+      disabled={disabled}
     >
       {children ? (
         children
