@@ -6,12 +6,39 @@ import DateTimePicker from 'react-native-ui-datepicker';
 import Button from '@shared/Button';
 import { SimpleModal } from '@shared/Modal';
 import { Picker } from '@shared/Picker';
+import { useAddEntry } from 'src/mutations/Entries';
+import { Entry } from '@models';
 
 const EntryAddForm: FC = () => {
   // date set to any to resolve issue caused by dayjs format
-  const [date, setDate] = useState<any>(dayjs());
+
   const [isDateModalVisible, setIsDateModalVisible] = useState(false);
+  const [name, setName] = useState('');
+  const [amount, setAmount] = useState(0);
   const [currency, setCurrency] = useState('DKK');
+  const [date, setDate] = useState<any>(dayjs());
+  const [comment, setComment] = useState('');
+  const [formData, setFormData] = useState<Omit<Entry, 'id'>>();
+  const { isLoading, mutate, isSuccess } = useAddEntry(formData);
+
+  const submitForm = () => {
+    console.log('name:', name);
+    console.log('amount:', amount);
+    console.log('currency:', currency);
+    console.log('date:', date);
+    console.log('comment:', comment);
+
+    setFormData({
+      name: name,
+      amount: amount,
+      currency: currency,
+      date: date,
+      comment: comment,
+      categoryId: 1,
+    });
+
+    useAddEntry(formData);
+  };
 
   return (
     <ScrollView
@@ -34,19 +61,31 @@ const EntryAddForm: FC = () => {
       <View style={styles.container}>
         {/* AMOUNT INPUT */}
         <View style={styles.formFieldWrapper}>
+          <Text style={styles.inputLabel}>Entry name</Text>
+          <TextInput
+            keyboardType="default"
+            placeholder="Entry name"
+            style={styles.inputField}
+            value={name}
+            onChangeText={value => {
+              setName(value);
+            }}
+          />
+        </View>
+        <View style={styles.formFieldWrapper}>
           <Text style={styles.inputLabel}>Amount</Text>
           <TextInput
             keyboardType="numeric"
             placeholder="Amount"
             style={styles.inputField}
-            value={'123'}
+            value={amount.toString()}
+            onChangeText={value => {
+              if (value.length === 0) {
+                setAmount(0);
+              } else setAmount(parseInt(value));
+            }}
           />
         </View>
-        {/* CURRENCY INPUT WILL BE CHANGED TO DROPDOWN OF DKK/EUR/USD */}
-        {/* <View style={styles.formFieldWrapper}>
-          <Text style={styles.inputLabel}>Currency</Text>
-          <TextInput keyboardType="default" placeholder="Currency" style={styles.inputField} />
-        </View> */}
         <View style={styles.formFieldWrapper}>
           <Text style={styles.inputLabel}>Date</Text>
           <Picker
@@ -78,17 +117,18 @@ const EntryAddForm: FC = () => {
             placeholder="Comment"
             multiline
             numberOfLines={4}
+            onChangeText={value => {
+              setComment(value);
+            }}
             style={[styles.inputField, styles.inputTextArea]}
           />
         </View>
-        {/* <View style={styles.addButtonWrapper}> */}
         <Button
           primary
           text="Add new entry"
-          onPress={() => console.log('submitForm')}
+          onPress={() => submitForm()}
           style={styles.addButtonWrapper} // use this style prop to style the button instead of wrapping it in a view
         />
-        {/* </View> */}
       </View>
     </ScrollView>
   );
@@ -104,7 +144,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     display: 'flex',
     flexDirection: 'column',
-    gap: 16,
+    gap: 10,
   },
   text: {
     fontSize: 18,

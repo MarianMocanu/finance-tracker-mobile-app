@@ -7,7 +7,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import dayjs from 'dayjs';
 import { SimpleModal } from '@shared/Modal';
 import Button from '@shared/Button';
-import { useDeleteEntry } from 'src/mutations/Mutations';
+import { useDeleteEntry } from 'src/mutations/Entries';
 
 const EntryDetails: FC = (dispatch: any) => {
   const { data: entry, isLoading } = useEntry(dispatch.route.params.id);
