@@ -4,7 +4,7 @@ import EntriesList from './screens/EntriesList';
 import EntryDetails from './screens/EntryDetails';
 import EntryAddForm from './screens/EntryAddForm';
 
-type EntriesStackParamList = {
+export type EntriesStackParamList = {
   'entries-list': undefined;
   'view-entry': { id: number };
   'add-entry': undefined;

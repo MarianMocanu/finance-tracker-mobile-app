@@ -1,15 +1,13 @@
 import { colors } from '@globals/style';
 import { useEntry } from '@queries/Entries';
-import { useNavigation, useNavigationState } from '@react-navigation/native';
-import { FC, useEffect } from 'react';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { FC } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { EntriesStackParamList } from '../EntriesStackNavigator';
 
-type Props = {
-  id: number;
-};
-
-const EntryDetails: FC = (dispatch: any) => {
-  const { data: entry, isLoading } = useEntry(dispatch.route.params.id);
+const EntryDetails: FC = () => {
+  const route = useRoute<RouteProp<EntriesStackParamList, 'view-entry'>>();
+  const { data: entry, isLoading } = useEntry(route.params.id);
 
   if (isLoading) {
     return (

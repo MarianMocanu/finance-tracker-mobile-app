@@ -9,13 +9,28 @@ interface Props extends PropsWithChildren {
   textStyle?: TextStyle;
   primary?: boolean;
   secondary?: boolean;
+  disabled?: boolean;
 }
 
-const Button: FC<Props> = ({ text, onPress, style, textStyle, children, primary, secondary }) => {
+const Button: FC<Props> = ({
+  text,
+  onPress,
+  style,
+  textStyle,
+  children,
+  primary,
+  secondary,
+  disabled,
+}) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[primary && styles.primary, secondary && styles.secondary, style]}
+      style={[
+        primary && styles.primary,
+        secondary && styles.secondary,
+        style,
+        disabled && { opacity: 0.5 },
+      ]}
     >
       {children ? (
         children
