@@ -5,6 +5,7 @@ import { FC, useState } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
+
 import { signUp } from '../authSlice';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AuthStackParamList } from 'src/navigation/AuthStackNavigator';
@@ -26,7 +27,7 @@ export const SignupScreen: FC = () => {
   const [password, setPassword] = useState<InputField>({ value: '', valid: false, blurred: false });
 
   function handleNameChange(text: string): void {
-    setName({ value: text, valid: text.length > 3, blurred: false });
+    setName({ value: text, valid: text.length >= 3, blurred: false });
   }
 
   function handleNameBlur(): void {
@@ -66,10 +67,11 @@ export const SignupScreen: FC = () => {
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
       automaticallyAdjustKeyboardInsets
+      scrollEnabled={false}
     >
       <Input
         style={[styles.input, name.blurred && (name.valid ? styles.valid : styles.error)]}
-        placeholder="Name"
+        placeholder="Full Name"
         onChangeText={handleNameChange}
         onBlur={handleNameBlur}
       />
