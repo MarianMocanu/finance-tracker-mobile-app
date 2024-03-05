@@ -1,5 +1,6 @@
 import { colors } from '@globals/style';
 import { useEntry } from '@queries/Entries';
+import { useCategories } from '@queries/Categories';
 import { CommonActions, useNavigation, useNavigationState } from '@react-navigation/native';
 import { FC, useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -11,6 +12,7 @@ import { useDeleteEntry } from 'src/mutations/Entries';
 
 const EntryDetails: FC = (dispatch: any) => {
   const { data: entry, isLoading } = useEntry(dispatch.route.params.id);
+  const { data: categories } = useCategories();
   const {
     isLoading: isDeleting,
     mutate: deleteEntry,
@@ -133,7 +135,7 @@ const EntryDetails: FC = (dispatch: any) => {
         {entry.categoryId && (
           <View style={styles.propertyWrapper}>
             <Text style={styles.propertyHeader}>Category</Text>
-            <Text>{entry.categoryId}</Text>
+            <Text>{categories?.find(category => category.id === entry.categoryId)?.name}</Text>
           </View>
         )}
       </View>
