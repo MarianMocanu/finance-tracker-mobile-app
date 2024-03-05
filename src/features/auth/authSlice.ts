@@ -57,13 +57,13 @@ export const signUp = (payload: SignupPayload) => async (dispatch: AppDispatch) 
   dispatch(request());
   try {
     const response = await axios.post<User>('/auth/signup', payload);
-    if (response.status === 201 && response.data.id) {
+    if (response.data.id) {
       dispatch(signupSuccess());
-      dispatch(logIn({ email: payload.email, password: payload.password }));
     } else {
       throw new Error('Invalid response from server');
     }
   } catch (error) {
+    console.error(error);
     dispatch(failure());
   } finally {
     dispatch(idle());
@@ -84,16 +84,17 @@ export const logIn = (payload: LoginPayload) => async (dispatch: AppDispatch) =>
   dispatch(request());
   try {
     const response = await axios.post<LoginResponse>('/auth/login', payload);
-    if (response.status === 200 && response.data.user && response.data.token) {
-      dispatch(loginSuccess(response.data.user));
+    if (response.data.user && response.data.token) {
       // Save token to secure storage
       await saveToken(response.data.token);
       // Add token to axios instance headers
       setToken(response.data.token);
+      dispatch(loginSuccess(response.data.user));
     } else {
       throw new Error('Invalid response from server');
     }
   } catch (error) {
+    console.error(error);
     dispatch(failure());
   } finally {
     dispatch(idle());

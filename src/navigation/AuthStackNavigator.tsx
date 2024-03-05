@@ -3,7 +3,10 @@ import { LoginScreen } from 'src/features/auth/screens/Login';
 import { SignupScreen } from 'src/features/auth/screens/Signup';
 
 export type AuthStackParamList = {
-  login: undefined;
+  login: {
+    email: string;
+    password: string;
+  };
   signup: undefined;
 };
 

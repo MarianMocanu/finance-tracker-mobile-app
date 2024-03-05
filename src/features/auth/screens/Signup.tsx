@@ -5,7 +5,9 @@ import { FC, useState } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
-import { signup } from '../authSlice';
+import { signUp } from '../authSlice';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AuthStackParamList } from 'src/navigation/AuthStackNavigator';
 
 interface InputField {
   value: string;
@@ -16,6 +18,7 @@ interface InputField {
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const SignupScreen: FC = () => {
+  const navigation = useNavigation<NavigationProp<AuthStackParamList, 'signup'>>();
   const dispatch = useDispatch<AppDispatch>();
 
   const [name, setName] = useState<InputField>({ value: '', valid: false, blurred: false });
@@ -52,9 +55,10 @@ export const SignupScreen: FC = () => {
     });
   }
 
-  function handleSignup(): void {
+  async function handleSignup(): Promise<void> {
     const user = { name: name.value, email: email.value, password: password.value };
-    dispatch(signup(user));
+    await dispatch(signUp(user));
+    navigation.navigate('login', { email: email.value, password: password.value });
   }
 
   return (

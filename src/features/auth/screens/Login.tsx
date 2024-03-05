@@ -1,13 +1,13 @@
 import { colors } from '@globals/style';
 import Button from '@shared/Button';
 import Input from '@shared/Input';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
-import { signin } from '../authSlice';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { AuthStackParamList } from 'src/navigation/AuthStackNavigator';
+import { logIn } from '../authSlice';
 
 interface InputField {
   value: string;
@@ -19,10 +19,19 @@ const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const LoginScreen: FC = () => {
   const navigation = useNavigation<NavigationProp<AuthStackParamList, 'login'>>();
+  const route = useRoute<RouteProp<AuthStackParamList, 'login'>>();
   const dispatch = useDispatch<AppDispatch>();
 
-  const [email, setEmail] = useState<InputField>({ value: '', valid: false, blurred: false });
-  const [password, setPassword] = useState<InputField>({ value: '', valid: false, blurred: false });
+  const [email, setEmail] = useState<InputField>({
+    value: '',
+    valid: false,
+    blurred: false,
+  });
+  const [password, setPassword] = useState<InputField>({
+    value: '',
+    valid: false,
+    blurred: false,
+  });
 
   function handleEmailChange(text: string): void {
     setEmail({ value: text, valid: emailRegex.test(email.value), blurred: false });
@@ -44,13 +53,19 @@ export const LoginScreen: FC = () => {
     });
   }
 
-  function handleLogin(): void {
-    dispatch(signin());
+  function handleLogin(email: string, password: string): void {
+    dispatch(logIn({ email, password }));
   }
 
   function navigateToSignup(): void {
     navigation.navigate('signup');
   }
+
+  useEffect(() => {
+    if (route.params && route.params.email && route.params.password) {
+      handleLogin(route.params.email, route.params.password);
+    }
+  }, [route.params]);
 
   return (
     <ScrollView
@@ -77,7 +92,7 @@ export const LoginScreen: FC = () => {
       />
       <Button
         text="Login"
-        onPress={handleLogin}
+        onPress={() => handleLogin(email.value, password.value)}
         primary
         style={styles.button}
         disabled={!email.valid || !password.valid}
