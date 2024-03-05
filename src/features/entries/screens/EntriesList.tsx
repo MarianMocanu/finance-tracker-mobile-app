@@ -56,6 +56,9 @@ const EntriesList: FC = () => {
     </View>
   ) : (
     <View style={styles.center}>
+      <TouchableOpacity style={styles.addButton} onPress={() => navigateToAddForm()}>
+        <Ionicons name="add-circle" size={40} color={colors.blue.base} />
+      </TouchableOpacity>
       <Text style={styles.text}>No entries yet</Text>
     </View>
   );
@@ -88,6 +91,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    margin: 20,
   },
   addButton: {
     position: 'absolute',
