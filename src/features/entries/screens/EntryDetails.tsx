@@ -116,28 +116,28 @@ const EntryDetails: FC = (dispatch: any) => {
             <Ionicons name="create-outline" size={24} color={colors.blue.base} />
           </TouchableOpacity>
         </View>
-        {/* DETAIL LIST */}
+        {/* DETAIL LIST TO BE REFACTORED INTO COMPONENT*/}
         <View style={styles.propertyWrapper}>
           <Text style={styles.propertyHeader}>ID</Text>
-          <Text>{entry.id}</Text>
+          <Text style={styles.propertyValue}>{entry.id}</Text>
         </View>
         <View style={styles.propertyWrapper}>
           <Text style={styles.propertyHeader}>Name</Text>
-          <Text>{entry.name}</Text>
+          <Text style={styles.propertyValue}>{entry.name}</Text>
         </View>
         <View style={styles.propertyWrapper}>
           <Text style={styles.propertyHeader}>Amount</Text>
-          <Text>
+          <Text style={styles.propertyValue}>
             {entry.amount} {entry.currency}
           </Text>
         </View>
         <View style={styles.propertyWrapper}>
           <Text style={styles.propertyHeader}>Date</Text>
-          <Text>{dayjs(entry.date).format('DD/MM/YYYY')}</Text>
+          <Text style={styles.propertyValue}>{dayjs(entry.date).format('DD/MM/YYYY')}</Text>
         </View>
         <View style={styles.propertyWrapper}>
           <Text style={styles.propertyHeader}>Comment</Text>
-          <Text>{entry.comment}</Text>
+          <Text style={styles.propertyValue}>{entry.comment}</Text>
         </View>
         {entry.categoryId && (
           <View style={styles.propertyWrapper}>
@@ -186,6 +186,10 @@ const styles = StyleSheet.create({
   propertyHeader: {
     fontWeight: '600',
     color: colors.text.light,
+  },
+
+  propertyValue: {
+    maxWidth: '70%',
   },
 
   headerWrapper: {

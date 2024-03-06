@@ -51,37 +51,35 @@ const EntryEditForm: FC = (dispatch: any) => {
   }, [isLoading, entry]);
 
   const submitForm = () => {
-    mutate(formData);
-    if (isSuccess && !isLoading) {
-      refetch();
+    // validate here
+    if (invalidFields.length === 0) {
+      mutate(formData);
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid data: check the fields.',
+      });
     }
   };
 
-  //   useEffect(() => {
-  //     if (isSuccess) {
-  //       setFormData({
-  //         name: '',
-  //         amount: 0,
-  //         currency: 'DKK',
-  //         date: dayjs().toISOString().slice(0, 10),
-  //         comment: '',
-  //         categoryId: undefined,
-  //       });
-  //       Toast.show({
-  //         type: 'success',
-  //         text1: 'Entry added successfully',
-  //       });
-  //     }
-  //   }, [isSuccess]);
+  useEffect(() => {
+    if (isSuccess && invalidFields.length === 0) {
+      refetch();
+      Toast.show({
+        type: 'success',
+        text1: 'Entry updated successfully',
+      });
+    }
+  }, [isSuccess]);
 
-  //   useEffect(() => {
-  //     if (isError) {
-  //       Toast.show({
-  //         type: 'error',
-  //         text1: 'Query submission error.',
-  //       });
-  //     }
-  //   }, [isError]);
+  useEffect(() => {
+    if (isError) {
+      Toast.show({
+        type: 'error',
+        text1: 'Query submission error.',
+      });
+    }
+  }, [isError]);
 
   const setters = {
     name: (value: string) => {
@@ -168,7 +166,7 @@ const EntryEditForm: FC = (dispatch: any) => {
         <ScrollView
           keyboardShouldPersistTaps="handled"
           style={{ flex: 1 }}
-          contentContainerStyle={{ flexGrow: 1 }}
+          automaticallyAdjustKeyboardInsets
         >
           <SimpleModal visible={isDateModalVisible} closeModal={() => setIsDateModalVisible(false)}>
             <Text style={styles.modalHeader}>Select date</Text>
@@ -326,7 +324,9 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   inputTextArea: {
-    height: 128,
+    height: 'auto',
+    minHeight: 128,
+    paddingBottom: 12,
     textAlignVertical: 'top',
   },
   inputLabel: {
@@ -344,13 +344,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   addButtonWrapper: {
-    marginTop: 'auto',
-  },
-  addButton: {
-    backgroundColor: colors.blue.base,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 24,
   },
   invalid: {
     borderColor: 'red',

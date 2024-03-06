@@ -1,7 +1,15 @@
 import { colors } from '@globals/style';
 import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import Button from '@shared/Button';
 import { SimpleModal } from '@shared/Modal';
@@ -26,6 +34,8 @@ const EntryAddForm: FC = () => {
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
 
   const numRegex = /^(0|[1-9][0-9]*)$/;
+
+  const keyboardVerticalOffset = Platform.OS === 'ios' ? 20 : 0;
 
   const submitForm = () => {
     mutate(formData);
@@ -135,6 +145,7 @@ const EntryAddForm: FC = () => {
         keyboardShouldPersistTaps="handled"
         style={{ flex: 1 }}
         contentContainerStyle={{ flexGrow: 1 }}
+        automaticallyAdjustKeyboardInsets
       >
         <SimpleModal visible={isDateModalVisible} closeModal={() => setIsDateModalVisible(false)}>
           <Text style={styles.modalHeader}>Select date</Text>
@@ -302,13 +313,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   addButtonWrapper: {
-    marginTop: 'auto',
-  },
-  addButton: {
-    backgroundColor: colors.blue.base,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 24,
   },
   invalid: {
     borderColor: 'red',
