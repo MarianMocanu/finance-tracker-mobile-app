@@ -22,6 +22,8 @@ export const LoginScreen: FC = () => {
   const route = useRoute<RouteProp<AuthStackParamList, 'login'>>();
   const dispatch = useDispatch<AppDispatch>();
 
+  const [loading, setLoading] = useState(false);
+
   const [email, setEmail] = useState<InputField>({
     value: '',
     valid: false,
@@ -54,7 +56,10 @@ export const LoginScreen: FC = () => {
   }
 
   function handleLogin(email: string, password: string): void {
-    dispatch(logIn({ email, password }));
+    setLoading(true);
+    dispatch(logIn({ email, password })).finally(() => {
+      setLoading(false);
+    });
   }
 
   function navigateToSignup(): void {
@@ -96,6 +101,7 @@ export const LoginScreen: FC = () => {
         primary
         style={styles.button}
         disabled={!email.valid || !password.valid}
+        loading={loading}
       />
     </ScrollView>
   );

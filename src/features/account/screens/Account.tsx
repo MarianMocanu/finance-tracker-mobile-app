@@ -3,13 +3,13 @@ import { FC } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
-import { logout } from 'src/features/auth/authSlice';
+import { logOut } from 'src/features/auth/authSlice';
 
 const Account: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   function handleLogout(): void {
-    dispatch(logout());
+    dispatch(logOut());
   }
   return (
     <View style={style.container}>
