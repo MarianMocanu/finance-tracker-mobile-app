@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { AuthStackParamList } from 'src/navigation/AuthStackNavigator';
-import { autoLogIn, logIn } from '../authSlice';
+import { logIn } from '../authSlice';
 
 interface InputField {
   value: string;
@@ -21,6 +21,8 @@ export const LoginScreen: FC = () => {
   const navigation = useNavigation<NavigationProp<AuthStackParamList, 'login'>>();
   const route = useRoute<RouteProp<AuthStackParamList, 'login'>>();
   const dispatch = useDispatch<AppDispatch>();
+
+  const [loading, setLoading] = useState(false);
 
   const [email, setEmail] = useState<InputField>({
     value: '',
@@ -54,7 +56,10 @@ export const LoginScreen: FC = () => {
   }
 
   function handleLogin(email: string, password: string): void {
-    dispatch(logIn({ email, password }));
+    setLoading(true);
+    dispatch(logIn({ email, password })).finally(() => {
+      setLoading(false);
+    });
   }
 
   function navigateToSignup(): void {
@@ -66,10 +71,6 @@ export const LoginScreen: FC = () => {
       handleLogin(route.params.email, route.params.password);
     }
   }, [route.params]);
-
-  useEffect(() => {
-    dispatch(autoLogIn());
-  }, []);
 
   return (
     <ScrollView
@@ -100,6 +101,7 @@ export const LoginScreen: FC = () => {
         primary
         style={styles.button}
         disabled={!email.valid || !password.valid}
+        loading={loading}
       />
     </ScrollView>
   );

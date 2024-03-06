@@ -1,5 +1,12 @@
 import { FC, PropsWithChildren } from 'react';
-import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  ViewStyle,
+} from 'react-native';
 import { colors } from '../../globals/style';
 
 interface Props extends PropsWithChildren {
@@ -10,6 +17,7 @@ interface Props extends PropsWithChildren {
   primary?: boolean;
   secondary?: boolean;
   disabled?: boolean;
+  loading?: boolean;
 }
 
 const Button: FC<Props> = ({
@@ -21,6 +29,7 @@ const Button: FC<Props> = ({
   primary,
   secondary,
   disabled,
+  loading,
 }) => {
   return (
     <TouchableOpacity
@@ -31,9 +40,11 @@ const Button: FC<Props> = ({
         style,
         disabled && { opacity: 0.5 },
       ]}
-      disabled={disabled}
+      disabled={disabled || loading}
     >
-      {children ? (
+      {loading ? (
+        <ActivityIndicator size="small" color={primary ? '#FFF' : colors.blue.dark} />
+      ) : children ? (
         children
       ) : (
         <Text style={[primary && styles.textPrimary, secondary && styles.textSecondary, textStyle]}>

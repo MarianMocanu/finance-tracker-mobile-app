@@ -34,15 +34,15 @@ export const authSlice = createSlice({
       state.user = action.payload;
       state.status = 'succeeded';
     },
+    logoutSuccess: (state: AuthState) => {
+      state.isLoggedIn = false;
+      state.user = null;
+      state.status = 'succeeded';
+    },
     failure: (state: AuthState) => {
       state.isLoggedIn = false;
       state.user = null;
       state.status = 'failed';
-    },
-    logout: (state: AuthState) => {
-      state.isLoggedIn = false;
-      state.user = null;
-      state.status = 'idle';
     },
   },
 });
@@ -75,7 +75,7 @@ type LoginPayload = {
   password: string;
 };
 
-type LoginResponse = {
+type AuthResponse = {
   user: User;
   token: string;
 };
@@ -83,7 +83,7 @@ type LoginResponse = {
 export const logIn = (payload: LoginPayload) => async (dispatch: AppDispatch) => {
   dispatch(request());
   try {
-    const response = await axios.post<LoginResponse>('/auth/login', payload);
+    const response = await axios.post<AuthResponse>('/auth/login', payload);
     const { user, token } = response.data;
     if (user && token) {
       await saveTokenInStorage(token);
@@ -102,36 +102,48 @@ export const logIn = (payload: LoginPayload) => async (dispatch: AppDispatch) =>
 
 export const autoLogIn = () => async (dispatch: AppDispatch) => {
   dispatch(request());
-  try {
-    const storedToken = await getTokenFromStorage();
-    if (storedToken) {
-      const response = await axios.get<{ user: User; token: string }>('/auth/verify', {
-        headers: { authorization: storedToken },
-      });
-      const { user, token } = response.data;
-      if (user && token) {
-        await saveTokenInStorage(token);
-        setTokenInAxiosHeaders(token);
-        dispatch(loginSuccess(response.data.user));
+  setTimeout(async () => {
+    try {
+      const storedToken = await getTokenFromStorage();
+      if (storedToken) {
+        const response = await axios.get<AuthResponse>('/auth/verify', {
+          headers: { authorization: storedToken },
+        });
+        const { user, token } = response.data;
+        if (user && token) {
+          await saveTokenInStorage(token);
+          setTokenInAxiosHeaders(token);
+          dispatch(loginSuccess(response.data.user));
+        } else {
+          throw new Error('Invalid response from server');
+        }
       } else {
-        throw new Error('Invalid response from server');
+        throw new Error('No token found');
       }
-    } else {
-      throw new Error('No token found');
+    } catch (error) {
+      console.error(error);
+      dispatch(failure());
+    } finally {
+      dispatch(idle());
     }
+  }, 2000);
+};
+
+export const logOut = () => async (dispatch: AppDispatch) => {
+  dispatch(request());
+  try {
+    await deleteTokenFromStorage();
+    setTokenInAxiosHeaders('');
+    dispatch(logoutSuccess());
   } catch (error) {
+    console.error(error);
     dispatch(failure());
   } finally {
     dispatch(idle());
   }
 };
 
-export const logOut = () => async (dispatch: AppDispatch) => {
-  await deleteTokenFromStorage();
-  setTokenInAxiosHeaders('');
-  dispatch(logout());
-};
-
-export const { idle, request, signupSuccess, loginSuccess, failure, logout } = authSlice.actions;
+export const { idle, request, signupSuccess, loginSuccess, logoutSuccess, failure } =
+  authSlice.actions;
 
 export default authSlice.reducer;
