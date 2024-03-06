@@ -1,7 +1,7 @@
 const blue = {
-  light: '#2FC2F7',
+  light: '#63bcff',
   base: '#2f81f7',
-  dark: '#2F43F7',
+  dark: '#0516b0',
 };
 
 const grey = {
