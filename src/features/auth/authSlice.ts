@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import axios, { setToken } from '@services/axios';
+import axios, { setTokenInAxiosHeaders } from '@services/axios';
 import { User } from 'src/models/User';
-import { deleteToken, getToken, saveToken } from 'src/app/util';
+import { deleteTokenFromStorage, getTokenFromStorage, saveTokenInStorage } from 'src/app/util';
 import { AppDispatch } from 'src/app/store';
 
 export interface AuthState {
@@ -20,6 +20,9 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    idle: (state: AuthState) => {
+      state.status = 'idle';
+    },
     request: (state: AuthState) => {
       state.status = 'loading';
     },
@@ -35,9 +38,6 @@ export const authSlice = createSlice({
       state.isLoggedIn = false;
       state.user = null;
       state.status = 'failed';
-    },
-    idle: (state: AuthState) => {
-      state.status = 'idle';
     },
     logout: (state: AuthState) => {
       state.isLoggedIn = false;
@@ -84,12 +84,11 @@ export const logIn = (payload: LoginPayload) => async (dispatch: AppDispatch) =>
   dispatch(request());
   try {
     const response = await axios.post<LoginResponse>('/auth/login', payload);
-    if (response.data.user && response.data.token) {
-      // Save token to secure storage
-      await saveToken(response.data.token);
-      // Add token to axios instance headers
-      setToken(response.data.token);
-      dispatch(loginSuccess(response.data.user));
+    const { user, token } = response.data;
+    if (user && token) {
+      await saveTokenInStorage(token);
+      setTokenInAxiosHeaders(token);
+      dispatch(loginSuccess(user));
     } else {
       throw new Error('Invalid response from server');
     }
@@ -101,36 +100,38 @@ export const logIn = (payload: LoginPayload) => async (dispatch: AppDispatch) =>
   }
 };
 
-// export const autoLogIn = () => async (dispatch: AppDispatch) => {
-//   dispatch(request());
-//   try {
-//     const token = await getToken();
-//     if (token) {
-//       setToken(token);
-//       const response = await axios.get<User>('/auth/me');
-//       if (response.status === 200 && response.data.id) {
-//         dispatch(loginSuccess(response.data));
-//       } else {
-//         throw new Error('Invalid response from server');
-//       }
-//     } else {
-//       throw new Error('No token found');
-//     }
-//   } catch (error) {
-//     dispatch(failure());
-//   } finally {
-//     dispatch(idle());
-//   }
-// }
+export const autoLogIn = () => async (dispatch: AppDispatch) => {
+  dispatch(request());
+  try {
+    const storedToken = await getTokenFromStorage();
+    if (storedToken) {
+      const response = await axios.get<{ user: User; token: string }>('/auth/verify', {
+        headers: { authorization: storedToken },
+      });
+      const { user, token } = response.data;
+      if (user && token) {
+        await saveTokenInStorage(token);
+        setTokenInAxiosHeaders(token);
+        dispatch(loginSuccess(response.data.user));
+      } else {
+        throw new Error('Invalid response from server');
+      }
+    } else {
+      throw new Error('No token found');
+    }
+  } catch (error) {
+    dispatch(failure());
+  } finally {
+    dispatch(idle());
+  }
+};
 
 export const logOut = () => async (dispatch: AppDispatch) => {
-  // Delete token from secure storage
-  await deleteToken();
-  // Remove token from axios instance headers
-  setToken('');
+  await deleteTokenFromStorage();
+  setTokenInAxiosHeaders('');
   dispatch(logout());
 };
 
-export const { request, signupSuccess, loginSuccess, failure, idle, logout } = authSlice.actions;
+export const { idle, request, signupSuccess, loginSuccess, failure, logout } = authSlice.actions;
 
 export default authSlice.reducer;

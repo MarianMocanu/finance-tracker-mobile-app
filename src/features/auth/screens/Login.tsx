@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { AuthStackParamList } from 'src/navigation/AuthStackNavigator';
-import { logIn } from '../authSlice';
+import { autoLogIn, logIn } from '../authSlice';
 
 interface InputField {
   value: string;
@@ -66,6 +66,10 @@ export const LoginScreen: FC = () => {
       handleLogin(route.params.email, route.params.password);
     }
   }, [route.params]);
+
+  useEffect(() => {
+    dispatch(autoLogIn());
+  }, []);
 
   return (
     <ScrollView
