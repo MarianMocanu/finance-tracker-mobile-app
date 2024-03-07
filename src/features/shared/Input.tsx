@@ -21,14 +21,14 @@ export default Input;
 
 const styles = StyleSheet.create({
   input: {
-    fontSize: 16,
-    lineHeight: 18,
+    fontSize: 18,
     fontWeight: '500',
     color: colors.text.dark,
+    backgroundColor: '#fff',
     borderColor: colors.border,
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
+    borderRadius: 4,
+    paddingHorizontal: 8,
     textAlignVertical: 'center',
     height: 48,
     width: '100%',

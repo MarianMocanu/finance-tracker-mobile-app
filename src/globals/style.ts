@@ -15,6 +15,16 @@ const text = {
   dark: '#0D293D',
 };
 
+const red = {
+  base: '#e23636',
+  light: '#f78d8d',
+};
+
+const green = {
+  base: '#82dd55',
+  light: '#a0f277',
+};
+
 const border = '#94AEB7';
 
-export const colors = { blue, text, border, grey };
+export const colors = { blue, text, border, grey, green, red };

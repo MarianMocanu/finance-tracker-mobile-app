@@ -1,7 +1,7 @@
 import { colors } from '@globals/style';
 import { useEntry } from '@queries/Entries';
 
-import { RouteProp } from '@react-navigation/native';
+import { CommonActions, RouteProp } from '@react-navigation/native';
 import { useCategories } from '@queries/Categories';
 import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import { FC, useState } from 'react';
@@ -19,12 +19,25 @@ const EntryDetails: FC = () => {
 
   const { data: entry, isLoading } = useEntry(route.params.id);
   const { data: categories } = useCategories();
-  const { isLoading: isDeleting, mutate: deleteEntry, isSuccess: isDeleteSuccess } = useDeleteEntry(route.params.id);
+  const {
+    isLoading: isDeleting,
+    mutate: deleteEntry,
+    isSuccess: isDeleteSuccess,
+  } = useDeleteEntry(route.params.id);
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
   function navigateToListView(): void {
     navigation.navigate('entries-list');
+  }
+
+  function navigateToEditView(id: number): void {
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'edit-entry',
+        params: { id },
+      }),
+    );
   }
 
   if (isLoading) {
@@ -49,12 +62,15 @@ const EntryDetails: FC = () => {
         {/* DELETE MODAL */}
         <SimpleModal
           visible={isDeleteModalVisible}
-          closeModal={() => (isDeleteSuccess ? navigateToListView() : setIsDeleteModalVisible(false))}
+          closeModal={() =>
+            isDeleteSuccess ? navigateToListView() : setIsDeleteModalVisible(false)
+          }
         >
           {/* DELETION IN PROGRESS */}
           {isDeleting && (
             <View style={styles.modalContentWrapper}>
               <Text style={styles.modalText}>DELETING...</Text>
+              <ActivityIndicator size="small" color={colors.blue.dark} />
             </View>
           )}
           {/* WARNING PROMPT */}
@@ -66,51 +82,66 @@ const EntryDetails: FC = () => {
               </View>
               <Text style={styles.modalText}>Are you sure you want to delete this entry?</Text>
               <View style={styles.modalButtonWrapper}>
-                <Button primary text="Cancel" onPress={() => setIsDeleteModalVisible(false)}></Button>
-                <Button secondary text="Delete" onPress={() => deleteEntry(route.params.id)}></Button>
+                <Button
+                  primary
+                  text="Cancel"
+                  onPress={() => setIsDeleteModalVisible(false)}
+                ></Button>
+                <Button
+                  secondary
+                  text="Delete"
+                  onPress={() => deleteEntry(route.params.id)}
+                ></Button>
               </View>
             </View>
           )}
           {/* DELETION SUCCESSFUL */}
           {isDeleteSuccess && (
             <View style={styles.modalContentWrapper}>
-              <Text style={styles.modalText}>DELETED SUCCESSFULLY</Text>
-              <Button primary text="Back to list view" onPress={() => navigateToListView()}></Button>
+              <Text style={[styles.header, { marginBottom: 20 }]}>ENTRY DELETED SUCCESSFULLY</Text>
+              <Button
+                primary
+                text="Back to list view"
+                onPress={() => navigateToListView()}
+              ></Button>
             </View>
           )}
         </SimpleModal>
         {/* HEADER */}
         <View style={styles.headerWrapper}>
-          <TouchableOpacity style={styles.deleteButton} onPress={() => setIsDeleteModalVisible(true)}>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => setIsDeleteModalVisible(true)}
+          >
             <Ionicons name="trash-outline" size={24} color={colors.blue.base} />
           </TouchableOpacity>
           <Text style={styles.header}>Entry Details</Text>
-          <TouchableOpacity style={styles.editButton} onPress={() => console.log('test')}>
+          <TouchableOpacity style={styles.editButton} onPress={() => navigateToEditView(entry.id)}>
             <Ionicons name="create-outline" size={24} color={colors.blue.base} />
           </TouchableOpacity>
         </View>
-        {/* DETAIL LIST */}
+        {/* DETAIL LIST TO BE REFACTORED INTO COMPONENT*/}
         <View style={styles.propertyWrapper}>
           <Text style={styles.propertyHeader}>ID</Text>
-          <Text>{entry.id}</Text>
+          <Text style={styles.propertyValue}>{entry.id}</Text>
         </View>
         <View style={styles.propertyWrapper}>
           <Text style={styles.propertyHeader}>Name</Text>
-          <Text>{entry.name}</Text>
+          <Text style={styles.propertyValue}>{entry.name}</Text>
         </View>
         <View style={styles.propertyWrapper}>
           <Text style={styles.propertyHeader}>Amount</Text>
-          <Text>
+          <Text style={styles.propertyValue}>
             {entry.amount} {entry.currency}
           </Text>
         </View>
         <View style={styles.propertyWrapper}>
           <Text style={styles.propertyHeader}>Date</Text>
-          <Text>{dayjs(entry.date).format('DD/MM/YYYY')}</Text>
+          <Text style={styles.propertyValue}>{dayjs(entry.date).format('DD/MM/YYYY')}</Text>
         </View>
         <View style={styles.propertyWrapper}>
           <Text style={styles.propertyHeader}>Comment</Text>
-          <Text>{entry.comment}</Text>
+          <Text style={styles.propertyValue}>{entry.comment}</Text>
         </View>
         {entry.categoryId && (
           <View style={styles.propertyWrapper}>
@@ -134,11 +165,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
 
-  text: {
-    fontSize: 18,
-    lineHeight: 22,
-  },
-
   center: {
     flex: 1,
     justifyContent: 'center',
@@ -159,6 +185,10 @@ const styles = StyleSheet.create({
   propertyHeader: {
     fontWeight: '600',
     color: colors.text.light,
+  },
+
+  propertyValue: {
+    maxWidth: '70%',
   },
 
   headerWrapper: {
@@ -221,4 +251,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
+
+  deleteMessage: { marginBottom: 20 },
 });

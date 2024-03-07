@@ -6,6 +6,7 @@ import { QUERY_KEYS } from '@queries/Entries';
 export const MUTATION_KEYS = {
   DELETE_ENTRY: 'delete-entry',
   ADD_ENTRY: 'add-entry',
+  UPDATE_ENTRY: 'update-entry',
 };
 
 export const useDeleteEntry = (id: number): UseMutationResult<number, Error> => {
@@ -32,6 +33,21 @@ export const useAddEntry = (entry: Omit<Entry, 'id'>): UseMutationResult<number,
     },
     onSuccess() {
       queryClient.invalidateQueries([QUERY_KEYS.ALL_ENTRIES]);
+    },
+  });
+};
+
+export const useUpdateEntry = (entry: Entry): UseMutationResult<number, Error> => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: [MUTATION_KEYS.UPDATE_ENTRY],
+    mutationFn: async function updateEntry() {
+      const response = await axios.patch(`/entry/${entry.id}`, entry);
+      return response.status;
+    },
+    onSuccess() {
+      queryClient.invalidateQueries([QUERY_KEYS.ALL_ENTRIES]);
+      queryClient.invalidateQueries([QUERY_KEYS.SINGLE_ENTRY]);
     },
   });
 };
