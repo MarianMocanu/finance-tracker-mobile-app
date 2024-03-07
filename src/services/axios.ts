@@ -9,4 +9,8 @@ const instance = axios.create({
   },
 });
 
+export function setTokenInAxiosHeaders(token: string) {
+  instance.defaults.headers.common.Authorization = token;
+}
+
 export default instance;
