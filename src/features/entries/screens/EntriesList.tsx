@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import EntryListItem from '../components/EntryListItem';
 import {
   ActivityIndicator,
   FlatList,
@@ -7,9 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import EntryListItem from '../components/EntryListItem';
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { colors } from '@globals/style';
 import { useEntries } from '@queries/Entries';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -18,10 +17,6 @@ import { EntriesStackParamList } from '../EntriesStackNavigator';
 const EntriesList: FC = () => {
   const navigation = useNavigation<NavigationProp<EntriesStackParamList, 'entries-list'>>();
   const { data: entries, isLoading } = useEntries();
-
-  function navigateToDetailedView(id: number): void {
-    navigation.navigate('view-entry', { id });
-  }
 
   function navigateToAddForm(): void {
     navigation.navigate('add-entry');

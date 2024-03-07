@@ -1,7 +1,7 @@
 import { colors } from '@globals/style';
 import { useEntry } from '@queries/Entries';
 
-import { RouteProp } from '@react-navigation/native';
+import { CommonActions, RouteProp } from '@react-navigation/native';
 import { useCategories } from '@queries/Categories';
 import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import { FC, useState } from 'react';
@@ -19,7 +19,11 @@ const EntryDetails: FC = () => {
 
   const { data: entry, isLoading } = useEntry(route.params.id);
   const { data: categories } = useCategories();
-  const { isLoading: isDeleting, mutate: deleteEntry, isSuccess: isDeleteSuccess } = useDeleteEntry(route.params.id);
+  const {
+    isLoading: isDeleting,
+    mutate: deleteEntry,
+    isSuccess: isDeleteSuccess,
+  } = useDeleteEntry(route.params.id);
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
@@ -58,7 +62,9 @@ const EntryDetails: FC = () => {
         {/* DELETE MODAL */}
         <SimpleModal
           visible={isDeleteModalVisible}
-          closeModal={() => (isDeleteSuccess ? navigateToListView() : setIsDeleteModalVisible(false))}
+          closeModal={() =>
+            isDeleteSuccess ? navigateToListView() : setIsDeleteModalVisible(false)
+          }
         >
           {/* DELETION IN PROGRESS */}
           {isDeleting && (
@@ -76,8 +82,16 @@ const EntryDetails: FC = () => {
               </View>
               <Text style={styles.modalText}>Are you sure you want to delete this entry?</Text>
               <View style={styles.modalButtonWrapper}>
-                <Button primary text="Cancel" onPress={() => setIsDeleteModalVisible(false)}></Button>
-                <Button secondary text="Delete" onPress={() => deleteEntry(route.params.id)}></Button>
+                <Button
+                  primary
+                  text="Cancel"
+                  onPress={() => setIsDeleteModalVisible(false)}
+                ></Button>
+                <Button
+                  secondary
+                  text="Delete"
+                  onPress={() => deleteEntry(route.params.id)}
+                ></Button>
               </View>
             </View>
           )}
@@ -95,7 +109,10 @@ const EntryDetails: FC = () => {
         </SimpleModal>
         {/* HEADER */}
         <View style={styles.headerWrapper}>
-          <TouchableOpacity style={styles.deleteButton} onPress={() => setIsDeleteModalVisible(true)}>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => setIsDeleteModalVisible(true)}
+          >
             <Ionicons name="trash-outline" size={24} color={colors.blue.base} />
           </TouchableOpacity>
           <Text style={styles.header}>Entry Details</Text>

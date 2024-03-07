@@ -244,7 +244,7 @@ const EntryEditForm: FC = (dispatch: any) => {
                   setOperationType(value);
                   setters.amount(formData.amount, value);
                 }}
-                initialSelectedIndex={entry.amount > 0 ? 0 : 1}
+                initialSelectedIndex={operationTypes.indexOf(operationType)}
                 placeholder="Operation type"
                 containerStyle={styles.inputField}
               />
@@ -265,7 +265,6 @@ const EntryEditForm: FC = (dispatch: any) => {
             <Pressable onPress={() => setIsDateModalVisible(true)}>
               <View style={styles.formFieldWrapper} pointerEvents="none">
                 <Text style={styles.inputLabel}>Date</Text>
-                {/* maybe you don't need a text input for the date, and just a simple Text component wrapped in a View styled as an inputFiled, check the Picker above for example */}
                 <Input
                   placeholder="Date"
                   style={styles.inputField}
