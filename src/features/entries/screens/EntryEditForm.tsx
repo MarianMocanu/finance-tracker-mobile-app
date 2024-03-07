@@ -30,11 +30,14 @@ const EntryEditForm: FC = (dispatch: any) => {
   });
   const { isLoading, mutate, isSuccess, isError } = useUpdateEntry(formData);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
-  const [markedDate, setMarkedDate] = useState('');
+  const [operationType, setOperationType] = useState<'Income' | 'Expense'>(
+    formData.amount > 0 ? 'Income' : 'Expense',
+  );
 
   const currencies = ['DKK', 'USD', 'EUR'];
+  const operationTypes = ['Income', 'Expense'];
 
-  const numRegex = /^(0|[1-9][0-9]*)$/;
+  const numRegex = /^-?\d+(\.\d+)?$/;
 
   const processDate = (date: string) => {
     const MyDate = new Date(date);
@@ -52,7 +55,7 @@ const EntryEditForm: FC = (dispatch: any) => {
 
   const submitForm = () => {
     // validate here
-    if (invalidFields.length === 0) {
+    if (invalidFields.length === 0 && !isLoading) {
       mutate(formData);
     } else {
       Toast.show({
@@ -88,16 +91,22 @@ const EntryEditForm: FC = (dispatch: any) => {
         name: value,
       }));
     },
-    amount: (value: string) => {
-      if (value.length === 0) {
+    amount: (value: number, type: string) => {
+      if (!numRegex.test(value.toString())) {
         setFormData(prevState => ({
           ...prevState,
           amount: 0,
         }));
       } else {
+        let convertedValue;
+        if ((type === 'Expense' && value > 0) || (type === 'Income' && value < 0)) {
+          convertedValue = value * -1;
+        } else {
+          convertedValue = value;
+        }
         setFormData(prevState => ({
           ...prevState,
-          amount: parseInt(value),
+          amount: convertedValue,
         }));
       }
     },
@@ -143,10 +152,10 @@ const EntryEditForm: FC = (dispatch: any) => {
           setInvalidFields([...invalidFields, 'amount']);
           Toast.show({
             type: 'error',
-            text1: 'Amount has to be a number greater than 0',
+            text1: 'Amount cannot be equal to 0',
           });
         }
-      } else if (value > 0) {
+      } else if (value !== 0) {
         setInvalidFields([...invalidFields.filter(field => field !== 'amount')]);
       }
     },
@@ -222,9 +231,22 @@ const EntryEditForm: FC = (dispatch: any) => {
                 style={invalidFields.includes('amount') ? styles.invalid : styles.valid}
                 value={formData.amount.toString()}
                 onChangeText={value => {
-                  setters.amount(value);
+                  setters.amount(parseInt(value), operationType);
                 }}
                 onBlur={() => validators.amount(formData.amount)}
+              />
+            </View>
+            <View style={styles.formFieldWrapper}>
+              <Text style={styles.inputLabel}>Operation type</Text>
+              <Picker
+                data={operationTypes}
+                onChange={value => {
+                  setOperationType(value);
+                  setters.amount(formData.amount, value);
+                }}
+                initialSelectedIndex={entry.amount > 0 ? 0 : 1}
+                placeholder="Operation type"
+                containerStyle={styles.inputField}
               />
             </View>
             <View style={styles.formFieldWrapper}>

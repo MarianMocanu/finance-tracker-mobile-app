@@ -28,9 +28,7 @@ export const useAddEntry = (entry: Omit<Entry, 'id'>): UseMutationResult<number,
   return useMutation({
     mutationKey: [MUTATION_KEYS.ADD_ENTRY],
     mutationFn: async function addEntry() {
-      console.log(entry);
       const response = await axios.post(`/entry/`, entry);
-      console.log(response);
       return response.data;
     },
     onSuccess() {

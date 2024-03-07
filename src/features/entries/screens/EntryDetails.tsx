@@ -67,6 +67,7 @@ const EntryDetails: FC = (dispatch: any) => {
           {isDeleting && (
             <View style={styles.modalContentWrapper}>
               <Text style={styles.modalText}>DELETING...</Text>
+              <ActivityIndicator size="small" color={colors.blue.dark} />
             </View>
           )}
           {/* WARNING PROMPT */}
@@ -159,11 +160,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     padding: 20,
     backgroundColor: '#fff',
-  },
-
-  text: {
-    fontSize: 18,
-    lineHeight: 22,
   },
 
   center: {

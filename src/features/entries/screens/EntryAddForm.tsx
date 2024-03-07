@@ -32,10 +32,12 @@ const EntryAddForm: FC = () => {
   });
   const { isLoading, mutate, isSuccess, isError } = useAddEntry(formData);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
+  const [operationType, setOperationType] = useState<'Income' | 'Expense'>(
+    formData.amount > 0 ? 'Income' : 'Expense',
+  );
+  const operationTypes = ['Income', 'Expense'];
 
-  const numRegex = /^(0|[1-9][0-9]*)$/;
-
-  const keyboardVerticalOffset = Platform.OS === 'ios' ? 20 : 0;
+  const numRegex = /^-?\d+(\.\d+)?$/;
 
   const submitForm = () => {
     mutate(formData);
@@ -74,16 +76,22 @@ const EntryAddForm: FC = () => {
         name: value,
       }));
     },
-    amount: (value: string) => {
-      if (value.length === 0) {
+    amount: (value: number, type: string) => {
+      if (!numRegex.test(value.toString())) {
         setFormData(prevState => ({
           ...prevState,
           amount: 0,
         }));
       } else {
+        let convertedValue;
+        if ((type === 'Expense' && value > 0) || (type === 'Income' && value < 0)) {
+          convertedValue = value * -1;
+        } else {
+          convertedValue = value;
+        }
         setFormData(prevState => ({
           ...prevState,
-          amount: parseInt(value),
+          amount: convertedValue,
         }));
       }
     },
@@ -130,10 +138,10 @@ const EntryAddForm: FC = () => {
           setInvalidFields([...invalidFields, 'amount']);
           Toast.show({
             type: 'error',
-            text1: 'Amount has to be a number greater than 0',
+            text1: 'Amount cannot be equal to 0',
           });
         }
-      } else if (value > 0) {
+      } else if (value > 0 || value < 0) {
         setInvalidFields([...invalidFields.filter(field => field !== 'amount')]);
       }
     },
@@ -199,9 +207,22 @@ const EntryAddForm: FC = () => {
               style={invalidFields.includes('amount') ? styles.invalid : styles.valid}
               value={formData.amount.toString()}
               onChangeText={value => {
-                setters.amount(value);
+                setters.amount(parseInt(value), operationType);
               }}
               onBlur={() => validators.amount(formData.amount)}
+            />
+          </View>
+          <View style={styles.formFieldWrapper}>
+            <Text style={styles.inputLabel}>Operation type</Text>
+            <Picker
+              data={operationTypes}
+              onChange={value => {
+                setOperationType(value);
+                setters.amount(formData.amount, value);
+              }}
+              initialSelectedIndex={0}
+              placeholder="Operation type"
+              containerStyle={styles.inputField}
             />
           </View>
           <View style={styles.formFieldWrapper}>
