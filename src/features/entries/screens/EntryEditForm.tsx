@@ -23,7 +23,7 @@ const EntryEditForm: FC = (dispatch: any) => {
     id: 0,
     name: '',
     amount: 0,
-    currency: 'DKK',
+    currency: entry ? entry?.currency : 'DKK',
     date: dayjs().toISOString().slice(0, 19),
     comment: '',
     categoryId: undefined,
@@ -67,11 +67,11 @@ const EntryEditForm: FC = (dispatch: any) => {
 
   useEffect(() => {
     if (isSuccess && invalidFields.length === 0) {
-      refetch();
       Toast.show({
         type: 'success',
         text1: 'Entry updated successfully',
       });
+      refetch();
     }
   }, [isSuccess]);
 
@@ -254,7 +254,9 @@ const EntryEditForm: FC = (dispatch: any) => {
               <Picker
                 data={currencies}
                 onChange={setters.currency}
-                initialSelectedIndex={currencies.indexOf(entry.currency)}
+                initialSelectedIndex={
+                  entry && !isEntryDataLoading ? currencies.indexOf(formData.currency) : 0
+                }
                 placeholder="Currency"
                 containerStyle={styles.inputField}
               />

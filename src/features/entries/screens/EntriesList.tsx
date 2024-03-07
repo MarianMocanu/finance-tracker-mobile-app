@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -11,6 +11,7 @@ import { CommonActions, useNavigation } from '@react-navigation/native';
 import { colors } from '@globals/style';
 import { useEntries } from '@queries/Entries';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import EntryListItem from '../components/EntryListItem';
 
 const EntriesList: FC = () => {
   const navigation = useNavigation();
@@ -46,12 +47,7 @@ const EntriesList: FC = () => {
         style={styles.list}
         data={entries}
         keyExtractor={item => `entry-${item.id.toString()}`}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.card} onPress={() => navigateToDetailedView(item.id)}>
-            <Text>{item.name}</Text>
-            <Text>{item.amount}</Text>
-          </TouchableOpacity>
-        )}
+        renderItem={({ item }) => <EntryListItem entry={item} />}
       />
     </View>
   ) : (
@@ -75,16 +71,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 22,
   },
-  card: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-    padding: 10,
-    marginVertical: 5,
-  },
   list: {
-    padding: 12,
+    padding: 0,
     paddingTop: 8,
   },
   center: {
