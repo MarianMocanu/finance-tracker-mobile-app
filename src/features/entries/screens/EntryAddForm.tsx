@@ -31,7 +31,12 @@ const EntryAddForm: FC = () => {
   const numRegex = /^-?\d+(\.\d+)?$/;
 
   const submitForm = () => {
-    mutate(formData);
+    invalidFields.length === 0 && !isLoading
+      ? mutate(formData)
+      : Toast.show({
+          type: 'error',
+          text1: 'Invalid fields.',
+        });
   };
 
   useEffect(() => {

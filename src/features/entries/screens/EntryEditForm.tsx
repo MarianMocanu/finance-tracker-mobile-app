@@ -62,7 +62,7 @@ const EntryEditForm: FC = (dispatch: any) => {
     } else {
       Toast.show({
         type: 'error',
-        text1: 'Invalid data: check the fields.',
+        text1: 'Invalid fields.',
       });
     }
   };
