@@ -21,6 +21,7 @@ const CategoryEditForm: FC = (dispatch: any) => {
   });
   const { isLoading, mutate, isSuccess, isError } = useUpdateCategory(formData);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
+  const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
 
   useEffect(() => {
     if (!isLoading && category) {
@@ -29,8 +30,13 @@ const CategoryEditForm: FC = (dispatch: any) => {
   }, [isLoading, category]);
 
   const submitForm = () => {
-    // validate here
-    if (invalidFields.length === 0 && !isLoading) {
+    if (
+      invalidFields.length === 0 &&
+      !isLoading &&
+      formData.color &&
+      hexColorRegex.test(formData.color) &&
+      formData.name.length > 2
+    ) {
       mutate(formData);
     } else {
       Toast.show({
@@ -89,7 +95,6 @@ const CategoryEditForm: FC = (dispatch: any) => {
       }
     },
     color: (value: string) => {
-      const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
       if (!hexColorRegex.test(value)) {
         if (!invalidFields.includes('color')) {
           setInvalidFields([...invalidFields, 'color']);
@@ -150,8 +155,8 @@ const CategoryEditForm: FC = (dispatch: any) => {
                   setters.color(value);
                 }}
                 onBlur={() => {
-                  setters.color(formData.color ?? '');
-                  validators.color(formData.color ?? '');
+                  setters.color(formData.color ?? colors.grey.base);
+                  validators.color(formData.color ?? colors.grey.base);
                 }}
               />
             </View>

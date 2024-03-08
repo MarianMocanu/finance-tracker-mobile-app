@@ -23,6 +23,7 @@ import { SimpleModal } from '@shared/Modal';
 import { CategoriesStackParamList } from '../CategoriesStackNavigator';
 import { useDeleteCategory } from 'src/mutations/Categories';
 import { EntriesStackParamList } from 'src/features/entries/EntriesStackNavigator';
+import contrastChecker from '@globals/ContrastChecker';
 
 const CategoryDetails: FC = () => {
   const route = useRoute<RouteProp<CategoriesStackParamList, 'view-category'>>();
@@ -129,7 +130,25 @@ const CategoryDetails: FC = () => {
           >
             <Ionicons name="trash-outline" size={24} color={colors.blue.base} />
           </TouchableOpacity>
-          <Text style={styles.header}>{category.name}</Text>
+          <Text
+            style={[
+              styles.header,
+              {
+                backgroundColor: category.color,
+                color: category.color
+                  ? contrastChecker(category.color)
+                    ? colors.text.black
+                    : colors.text.white
+                  : colors.text.black,
+                paddingHorizontal: 10,
+                paddingVertical: 2,
+                paddingBottom: 4,
+                borderRadius: 40,
+              },
+            ]}
+          >
+            {category.name}
+          </Text>
           <TouchableOpacity
             style={styles.editButton}
             onPress={() => navigateToEditView(category.id)}

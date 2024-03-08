@@ -1,7 +1,6 @@
 import { colors } from '@globals/style';
 import { FC, useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Calendar } from 'react-native-calendars';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Button from '@shared/Button';
 import { useAddCategory } from 'src/mutations/Categories';
 import { Category } from '@models';
@@ -14,13 +13,26 @@ const CategoryAddForm: FC = () => {
     name: '',
     color: '',
   });
-  const { mutate, isSuccess, isError } = useAddCategory(formData);
+  const { mutate, isSuccess, isError, isLoading } = useAddCategory(formData);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
 
   const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
 
   const submitForm = () => {
-    mutate(formData);
+    if (
+      invalidFields.length === 0 &&
+      !isLoading &&
+      formData.color &&
+      hexColorRegex.test(formData.color) &&
+      formData.name.length > 2
+    ) {
+      mutate(formData);
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid data: check the fields.',
+      });
+    }
   };
 
   useEffect(() => {
@@ -55,7 +67,7 @@ const CategoryAddForm: FC = () => {
     color: (value: string) => {
       setFormData(prevState => ({
         ...prevState,
-        name: value,
+        color: value,
       }));
     },
   };
@@ -127,8 +139,8 @@ const CategoryAddForm: FC = () => {
                 setters.color(value);
               }}
               onBlur={() => {
-                setters.color(formData.color ?? '');
-                validators.color(formData.color ?? '');
+                setters.color(formData.color ?? colors.grey.base);
+                validators.color(formData.color ?? colors.grey.base);
               }}
             />
           </View>
