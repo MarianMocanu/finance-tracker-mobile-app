@@ -12,13 +12,14 @@ import { SimpleModal } from '@shared/Modal';
 import Button from '@shared/Button';
 import { useDeleteEntry } from 'src/mutations/Entries';
 import { EntriesStackParamList } from '../EntriesStackNavigator';
+import contrastChecker from '@globals/ContrastChecker';
 
 const EntryDetails: FC = () => {
   const route = useRoute<RouteProp<EntriesStackParamList, 'view-entry'>>();
   const navigation = useNavigation<NavigationProp<EntriesStackParamList, 'view-entry'>>();
 
   const { data: entry, isLoading } = useEntry(route.params.id);
-  const { data: categories } = useCategories();
+  const { data: categories, isLoading: areCategoriesLoading } = useCategories();
   const {
     isLoading: isDeleting,
     mutate: deleteEntry,
@@ -40,7 +41,7 @@ const EntryDetails: FC = () => {
     );
   }
 
-  if (isLoading) {
+  if (isLoading && areCategoriesLoading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={colors.blue.dark} />
@@ -48,7 +49,7 @@ const EntryDetails: FC = () => {
     );
   }
 
-  if (!isLoading && !entry) {
+  if (!isLoading && !entry && !areCategoriesLoading && !categories) {
     return (
       <View style={styles.container}>
         <Text>No data for this entry found</Text>
@@ -56,7 +57,8 @@ const EntryDetails: FC = () => {
     );
   }
 
-  if (entry) {
+  if (entry && categories) {
+    const category = categories.find(category => category.id === entry.categoryId);
     return (
       <View style={styles.container}>
         {/* DELETE MODAL */}
@@ -132,7 +134,7 @@ const EntryDetails: FC = () => {
         <View style={styles.propertyWrapper}>
           <Text style={styles.propertyHeader}>Amount</Text>
           <Text style={styles.propertyValue}>
-            {entry.amount} {entry.currency}
+            {entry.amount} {entry.currency.toUpperCase()}
           </Text>
         </View>
         <View style={styles.propertyWrapper}>
@@ -146,7 +148,7 @@ const EntryDetails: FC = () => {
         {entry.categoryId && (
           <View style={styles.propertyWrapper}>
             <Text style={styles.propertyHeader}>Category</Text>
-            <Text>{categories?.find(category => category.id === entry.categoryId)?.name}</Text>
+            <Text>{category?.name}</Text>
           </View>
         )}
       </View>

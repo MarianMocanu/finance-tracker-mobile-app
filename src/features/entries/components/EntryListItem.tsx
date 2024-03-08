@@ -32,7 +32,7 @@ const EntryListItem: FC<Props> = ({ entry }) => {
       </View>
 
       <Text style={[styles.amount, entry.amount > 0 ? styles.income : styles.expense]}>
-        {entry.amount} {entry.currency}
+        {entry.amount} {entry.currency.toUpperCase()}
       </Text>
       <Ionicons name="chevron-forward" size={24} color={colors.border} />
     </TouchableOpacity>

@@ -1,15 +1,6 @@
 import { colors } from '@globals/style';
-import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import Button from '@shared/Button';
 import { SimpleModal } from '@shared/Modal';
@@ -18,6 +9,7 @@ import { useAddEntry } from 'src/mutations/Entries';
 import { Entry } from '@models';
 import Input from '@shared/Input';
 import Toast from 'react-native-toast-message';
+import { useCategories } from '@queries/Categories';
 const EntryAddForm: FC = () => {
   // date set to any to resolve issue caused by dayjs format
 
@@ -31,6 +23,7 @@ const EntryAddForm: FC = () => {
     categoryId: undefined,
   });
   const { isLoading, mutate, isSuccess, isError } = useAddEntry(formData);
+  const { data: categories, isLoading: areCategoriesLoading } = useCategories();
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
   const [operationType, setOperationType] = useState<'Income' | 'Expense'>('Income');
   const operationTypes = ['Income', 'Expense'];
@@ -81,7 +74,7 @@ const EntryAddForm: FC = () => {
           amount: 0,
         }));
       } else {
-        let convertedValue;
+        let convertedValue: number;
         if ((type === 'Expense' && value > 0) || (type === 'Income' && value < 0)) {
           convertedValue = value * -1;
         } else {
@@ -107,6 +100,15 @@ const EntryAddForm: FC = () => {
           date: convertedValue.toISOString(),
         }));
       }
+    },
+    category: (value: string) => {
+      setFormData(prevState => ({
+        ...prevState,
+        categoryId:
+          value === 'No Category'
+            ? undefined
+            : categories?.find(category => category.name === value)?.id,
+      }));
     },
     comment: (value: string) => {
       setFormData(prevState => ({
@@ -144,6 +146,14 @@ const EntryAddForm: FC = () => {
       }
     },
   };
+
+  if (isLoading && areCategoriesLoading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={colors.blue.dark} />
+      </View>
+    );
+  }
 
   return (
     <>
@@ -246,6 +256,28 @@ const EntryAddForm: FC = () => {
               />
             </View>
           </Pressable>
+          {/* CATEGORY PICKER */}
+          {categories ? (
+            <View style={styles.formFieldWrapper}>
+              <Text style={styles.inputLabel}>Category</Text>
+              <Picker
+                data={[{ name: 'No Category', color: '#ffffff' }]
+                  .concat(
+                    categories.map(category => ({
+                      ...category,
+                      color: category.color || '#FFFFFF',
+                    })),
+                  )
+                  .map(category => category.name)}
+                onChange={setters.category}
+                initialSelectedIndex={0}
+                placeholder="Category"
+                containerStyle={styles.inputField}
+              />
+            </View>
+          ) : (
+            <ActivityIndicator size="small" color={colors.blue.dark} />
+          )}
           {/* COMMENT INPUT */}
           <View style={styles.formFieldWrapper}>
             <Text style={styles.inputLabel}>Comment</Text>
@@ -339,5 +371,11 @@ const styles = StyleSheet.create({
   },
   valid: {
     borderColor: colors.border,
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 20,
   },
 });

@@ -11,6 +11,7 @@ import { Entry } from '@models';
 import Input from '@shared/Input';
 import Toast from 'react-native-toast-message';
 import { useEntry } from '@queries/Entries';
+import { useCategories } from '@queries/Categories';
 const EntryEditForm: FC = (dispatch: any) => {
   const {
     data: entry,
@@ -29,6 +30,7 @@ const EntryEditForm: FC = (dispatch: any) => {
     categoryId: undefined,
   });
   const { isLoading, mutate, isSuccess, isError } = useUpdateEntry(formData);
+  const { data: categories, isLoading: areCategoriesLoading } = useCategories();
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
   const [operationType, setOperationType] = useState<'Income' | 'Expense'>(
     formData.amount > 0 ? 'Income' : 'Expense',
@@ -98,7 +100,7 @@ const EntryEditForm: FC = (dispatch: any) => {
           amount: 0,
         }));
       } else {
-        let convertedValue;
+        let convertedValue: number;
         if ((type === 'Expense' && value > 0) || (type === 'Income' && value < 0)) {
           convertedValue = value * -1;
         } else {
@@ -123,6 +125,15 @@ const EntryEditForm: FC = (dispatch: any) => {
           date: new Date(value).toISOString().slice(0, 19),
         }));
       }
+    },
+    category: (value: string) => {
+      setFormData(prevState => ({
+        ...prevState,
+        categoryId:
+          value === 'No Category'
+            ? null
+            : categories?.find(category => category.name === value)?.id,
+      }));
     },
     comment: (value: string) => {
       setFormData(prevState => ({
@@ -161,7 +172,7 @@ const EntryEditForm: FC = (dispatch: any) => {
     },
   };
 
-  if (isLoading || isEntryDataLoading) {
+  if (isLoading && areCategoriesLoading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={colors.blue.dark} />
@@ -273,6 +284,39 @@ const EntryEditForm: FC = (dispatch: any) => {
                 />
               </View>
             </Pressable>
+            {/* CATEGORY PICKER */}
+            {categories ? (
+              <View style={styles.formFieldWrapper}>
+                <Text style={styles.inputLabel}>Category</Text>
+                <Picker
+                  data={[{ id: 0, name: 'No Category', color: '#ffffff' }]
+                    .concat(
+                      categories.map(category => ({
+                        ...category,
+                        color: category.color || '#FFFFFF',
+                      })),
+                    )
+                    .map(category => category.name)}
+                  onChange={setters.category}
+                  initialSelectedIndex={
+                    entry?.categoryId
+                      ? [{ id: 0, name: 'No Category', color: '#ffffff' }]
+                          .concat(
+                            categories.map(category => ({
+                              ...category,
+                              color: category.color || '#FFFFFF',
+                            })),
+                          )
+                          .findIndex(category => category.id === entry.categoryId)
+                      : 0
+                  }
+                  placeholder="Category"
+                  containerStyle={styles.inputField}
+                />
+              </View>
+            ) : (
+              <ActivityIndicator size="small" color={colors.blue.dark} />
+            )}
             {/* COMMENT INPUT */}
             <View style={styles.formFieldWrapper}>
               <Text style={styles.inputLabel}>Comment</Text>
@@ -367,7 +411,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   addButtonWrapper: {
-    marginTop: 24,
+    marginTop: 8,
   },
   invalid: {
     borderColor: 'red',
