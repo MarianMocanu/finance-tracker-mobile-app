@@ -56,7 +56,7 @@ const CategoryDetails: FC = () => {
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
   function navigateToDetailedView(id: number): void {
-    entryNavigation.navigate('view-entry', { id });
+    entryNavigation.navigate('view-entry', { id, from: 'view-category' });
   }
 
   function navigateToList(): void {
