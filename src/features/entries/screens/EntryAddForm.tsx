@@ -32,9 +32,7 @@ const EntryAddForm: FC = () => {
   });
   const { isLoading, mutate, isSuccess, isError } = useAddEntry(formData);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
-  const [operationType, setOperationType] = useState<'Income' | 'Expense'>(
-    formData.amount > 0 ? 'Income' : 'Expense',
-  );
+  const [operationType, setOperationType] = useState<'Income' | 'Expense'>('Income');
   const operationTypes = ['Income', 'Expense'];
 
   const numRegex = /^-?\d+(\.\d+)?$/;

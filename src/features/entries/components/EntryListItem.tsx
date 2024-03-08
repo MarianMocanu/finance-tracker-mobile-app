@@ -24,8 +24,10 @@ const EntryListItem: FC<Props> = ({ entry }) => {
 
   return (
     <TouchableOpacity style={styles.card} onPress={() => navigateToDetailedView(entry.id)}>
-      <View>
-        <Text style={styles.entryHeader}>{entry.name}</Text>
+      <View style={styles.headerWrapper}>
+        <Text style={styles.entryHeader}>
+          {entry.name.length > 16 ? entry.name.substring(0, 16) + '...' : entry.name}
+        </Text>
         <Text style={styles.entryDate}>{dayjs(entry.date).format('DD-MM-YYYY')}</Text>
       </View>
 
@@ -52,6 +54,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 16,
+  },
+
+  headerWrapper: {
+    width: '50%',
   },
 
   entryHeader: {
