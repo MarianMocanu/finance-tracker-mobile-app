@@ -12,6 +12,7 @@ import { colors } from '@globals/style';
 import { useCategories } from '@queries/Categories';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { CategoriesStackParamList } from '../CategoriesStackNavigator';
+import Button from '@shared/Button';
 
 const CategoriesList: FC = () => {
   const navigation = useNavigation<NavigationProp<CategoriesStackParamList, 'categories-list'>>();
@@ -26,35 +27,32 @@ const CategoriesList: FC = () => {
   }
 
   if (isLoading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color={colors.blue.dark} />
-      </View>
-    );
+    return <ActivityIndicator size="large" color={colors.blue.dark} style={{ flex: 1 }} />;
   }
 
-  return categories?.length ? (
+  return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.addButton} onPress={() => navigateToAddForm()}>
+      <Button style={styles.addButton} onPress={() => navigateToAddForm()}>
         <Ionicons name="add-circle" size={40} color={colors.blue.base} />
-      </TouchableOpacity>
+      </Button>
       <FlatList
         style={styles.list}
+        contentContainerStyle={{ flex: 1 }}
         data={categories}
         keyExtractor={item => `category-${item.id.toString()}`}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[styles.card, { borderColor: item.color }]}
+          <Button
+            style={{ ...styles.card, borderColor: item.color }}
             onPress={() => navigateToDetailedView(item.id)}
-          >
-            <Text style={{ textTransform: 'capitalize' }}>{item.name}</Text>
-          </TouchableOpacity>
+            text={item.name.toUpperCase()}
+          />
         )}
+        ListEmptyComponent={
+          <View style={styles.centeredContainer}>
+            <Text style={styles.text}>No categories yet</Text>
+          </View>
+        }
       />
-    </View>
-  ) : (
-    <View style={styles.center}>
-      <Text style={styles.text}>No Categories yet</Text>
     </View>
   );
 };
@@ -82,7 +80,7 @@ const styles = StyleSheet.create({
     padding: 12,
     paddingTop: 8,
   },
-  center: {
+  centeredContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

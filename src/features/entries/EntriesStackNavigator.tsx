@@ -7,7 +7,7 @@ import EntryEditForm from './screens/EntryEditForm';
 
 export type EntriesStackParamList = {
   'entries-list': undefined;
-  'view-entry': { id: number };
+  'view-entry': { id: number; from: 'entries-list' | 'view-category' };
   'add-entry': undefined;
   'edit-entry': { id: number };
   'delete-entry': undefined;
@@ -22,9 +22,6 @@ function EntriesNavigator() {
       <Stack.Screen name="view-entry" component={EntryDetails} />
       <Stack.Screen name="add-entry" component={EntryAddForm} />
       <Stack.Screen name="edit-entry" component={EntryEditForm} />
-      {/* <Stack.Screen name='add-entry' component={EntriesListScreen} />
-      <Stack.Screen name='edit-entry' component={EntriesListScreen} />
-      <Stack.Screen name='delete-entry' component={EntriesListScreen} /> */}
     </Stack.Navigator>
   );
 }

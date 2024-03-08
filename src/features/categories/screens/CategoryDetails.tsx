@@ -24,10 +24,12 @@ import { CategoriesStackParamList } from '../CategoriesStackNavigator';
 import { useDeleteCategory } from 'src/mutations/Categories';
 import { EntriesStackParamList } from 'src/features/entries/EntriesStackNavigator';
 import contrastChecker from '@globals/ContrastChecker';
+import Toast from 'react-native-toast-message';
 
 const CategoryDetails: FC = () => {
   const route = useRoute<RouteProp<CategoriesStackParamList, 'view-category'>>();
-  const navigation = useNavigation<NavigationProp<EntriesStackParamList>>();
+  const entryNavigation = useNavigation<NavigationProp<EntriesStackParamList>>();
+  const navigation = useNavigation<NavigationProp<CategoriesStackParamList>>();
 
   const { data: category, isLoading } = useCategory(route.params.id);
   const { data: categoryEntries, isLoading: isLoadingEntries } = useEntriesForCategory(
@@ -40,10 +42,21 @@ const CategoryDetails: FC = () => {
     isSuccess: isDeleteSuccess,
   } = useDeleteCategory(route.params.id);
 
+  function deleteCategoryFn(id: number) {
+    if (categoryEntries?.length === 0) {
+      deleteCategory(id);
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Entries exist in this category.',
+      });
+    }
+  }
+
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
   function navigateToDetailedView(id: number): void {
-    navigation.navigate('view-entry', { id });
+    entryNavigation.navigate('view-entry', { id, from: 'view-category' });
   }
 
   function navigateToList(): void {
@@ -77,101 +90,119 @@ const CategoryDetails: FC = () => {
 
   if (category) {
     return (
-      <View style={styles.container}>
-        {/* DELETE MODAL */}
-        <SimpleModal
-          visible={isDeleteModalVisible}
-          closeModal={() => (isDeleteSuccess ? navigateToList() : setIsDeleteModalVisible(false))}
-        >
-          {/* DELETION IN PROGRESS */}
-          {isDeleting && (
-            <View style={styles.modalContentWrapper}>
-              <Text style={styles.modalText}>DELETING...</Text>
-              <ActivityIndicator size="small" color={colors.blue.dark} />
-            </View>
-          )}
-          {/* WARNING PROMPT */}
-          {!isDeleteSuccess && (
-            <View>
-              <View style={styles.modalHeaderWrapper}>
-                <Text style={styles.modalHeader}>Delete category</Text>
-                <Ionicons name="warning" size={42} color={colors.text.light} />
+      <>
+        <View style={styles.container}>
+          {/* DELETE MODAL */}
+          <SimpleModal
+            visible={isDeleteModalVisible}
+            closeModal={() => (isDeleteSuccess ? navigateToList() : setIsDeleteModalVisible(false))}
+          >
+            {/* DELETION IN PROGRESS */}
+            {isDeleting && (
+              <View style={styles.modalContentWrapper}>
+                <Text style={styles.modalText}>DELETING...</Text>
+                <ActivityIndicator size="small" color={colors.blue.dark} />
               </View>
-              <Text style={styles.modalText}>Are you sure you want to delete this category?</Text>
-              <View style={styles.modalButtonWrapper}>
-                <Button
-                  primary
-                  text="Cancel"
-                  onPress={() => setIsDeleteModalVisible(false)}
-                ></Button>
-                <Button
-                  secondary
-                  text="Delete"
-                  onPress={() => deleteCategory(route.params.id)}
-                ></Button>
-              </View>
-            </View>
-          )}
-          {/* DELETION SUCCESSFUL */}
-          {isDeleteSuccess && (
-            <View style={styles.modalContentWrapper}>
-              <Text style={[styles.header, { marginBottom: 20 }]}>
-                CATEGORY DELETED SUCCESSFULLY
-              </Text>
-              <Button primary text="Back to list view" onPress={() => navigateToList()}></Button>
-            </View>
-          )}
-        </SimpleModal>
-        {/* HEADER */}
-        <View style={styles.headerWrapper}>
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => setIsDeleteModalVisible(true)}
-          >
-            <Ionicons name="trash-outline" size={24} color={colors.blue.base} />
-          </TouchableOpacity>
-          <Text
-            style={[
-              styles.header,
-              {
-                backgroundColor: category.color,
-                color: category.color
-                  ? contrastChecker(category.color)
-                    ? colors.text.black
-                    : colors.text.white
-                  : colors.text.black,
-                paddingHorizontal: 10,
-                paddingVertical: 2,
-                paddingBottom: 4,
-                borderRadius: 40,
-              },
-            ]}
-          >
-            {category.name}
-          </Text>
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => navigateToEditView(category.id)}
-          >
-            <Ionicons name="create-outline" size={24} color={colors.blue.base} />
-          </TouchableOpacity>
-        </View>
-        {categoryEntries && categoryEntries?.length > 0 && (
-          <FlatList
-            style={styles.list}
-            data={
-              categoryEntries && categoryEntries.filter(entry => entry.categoryId === category.id)
-            }
-            keyExtractor={item => `entry-${item.id.toString()}`}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={styles.card} onPress={() => navigateToDetailedView(item.id)}>
-                <Text>{item.name}</Text>
-                <Text>{item.amount}</Text>
-              </TouchableOpacity>
             )}
-          />
-        )}
-      </View>
+            {/* WARNING PROMPT */}
+            {!isDeleteSuccess && (
+              <View>
+                <View style={styles.modalHeaderWrapper}>
+                  <Text style={styles.modalHeader}>Delete category</Text>
+                  <Ionicons name="warning" size={42} color={colors.text.light} />
+                </View>
+
+                {categoryEntries && categoryEntries?.length > 0 ? (
+                  <Text style={styles.modalText}>
+                    Deletion not possible, entries exist in this category.
+                  </Text>
+                ) : (
+                  <Text style={styles.modalText}>
+                    Are you sure you want to delete this category?
+                  </Text>
+                )}
+                <View style={styles.modalButtonWrapper}>
+                  <Button
+                    primary
+                    text="Cancel"
+                    onPress={() => setIsDeleteModalVisible(false)}
+                  ></Button>
+
+                  <Button
+                    secondary
+                    text="Delete"
+                    onPress={() => deleteCategoryFn(route.params.id)}
+                    disabled={categoryEntries?.length == 0 && categoryEntries ? false : true}
+                  ></Button>
+                </View>
+              </View>
+            )}
+            {/* DELETION SUCCESSFUL */}
+            {isDeleteSuccess && (
+              <View style={styles.modalContentWrapper}>
+                <Text style={[styles.header, { marginBottom: 20 }]}>
+                  CATEGORY DELETED SUCCESSFULLY
+                </Text>
+                <Button primary text="Back to list view" onPress={() => navigateToList()}></Button>
+              </View>
+            )}
+          </SimpleModal>
+          {/* HEADER */}
+          <View style={styles.headerWrapper}>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => setIsDeleteModalVisible(true)}
+            >
+              <Ionicons name="trash-outline" size={24} color={colors.blue.base} />
+            </TouchableOpacity>
+            <Text
+              style={[
+                styles.header,
+                {
+                  backgroundColor: category.color,
+                  color: category.color
+                    ? contrastChecker(category.color)
+                      ? colors.text.black
+                      : colors.text.white
+                    : colors.text.black,
+                  paddingHorizontal: 10,
+                  paddingVertical: 2,
+                  paddingBottom: 4,
+                  borderRadius: 12,
+                  overflow: 'hidden',
+                },
+              ]}
+            >
+              {category.name}
+            </Text>
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => navigateToEditView(category.id)}
+            >
+              <Ionicons name="create-outline" size={24} color={colors.blue.base} />
+            </TouchableOpacity>
+          </View>
+          {categoryEntries && categoryEntries?.length > 0 && (
+            <FlatList
+              style={styles.list}
+              data={
+                categoryEntries && categoryEntries.filter(entry => entry.categoryId === category.id)
+              }
+              keyExtractor={item => `entry-${item.id.toString()}`}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.card}
+                  onPress={() => navigateToDetailedView(item.id)}
+                >
+                  <Text>{item.name}</Text>
+                  <Text>{item.amount}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          )}
+        </View>
+        <Toast />
+      </>
     );
   }
 };

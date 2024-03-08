@@ -1,25 +1,22 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Entry } from '@models';
 import { colors } from '@globals/style';
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 import { FC } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import dayjs from 'dayjs';
+import { EntriesStackParamList } from '../EntriesStackNavigator';
 
 type Props = {
   entry: Entry;
+  from: 'entries-list' | 'view-category';
 };
 
-const EntryListItem: FC<Props> = ({ entry }) => {
-  const navigation = useNavigation();
+const EntryListItem: FC<Props> = ({ entry, from }) => {
+  const navigation = useNavigation<NavigationProp<EntriesStackParamList>>();
 
   function navigateToDetailedView(id: number): void {
-    navigation.dispatch(
-      CommonActions.navigate({
-        name: 'view-entry',
-        params: { id },
-      }),
-    );
+    navigation.navigate('view-entry', { id, from });
   }
 
   return (
