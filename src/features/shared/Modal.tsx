@@ -19,15 +19,34 @@ interface Props extends PropsWithChildren {
    * Height of the modal. Max height is 90% of the screen.
    */
   height?: DimensionValue;
+  /**
+   * Whether the modal content is transparent or not. Default is false
+   */
+  transparent?: boolean;
 }
 
-export const SimpleModal: FC<Props> = ({ visible, closeModal, children, height, width }) => {
+export const SimpleModal: FC<Props> = ({
+  visible,
+  closeModal,
+  children,
+  height,
+  width,
+  transparent,
+}) => {
   return (
     <Modal visible={visible} onRequestClose={closeModal} transparent={true}>
       <TouchableWithoutFeedback onPress={closeModal}>
         <View style={styles.modalContainer}>
           <TouchableWithoutFeedback>
-            <View style={[styles.modalContent, { height, width: width ?? '90%' }]}>{children}</View>
+            <View
+              style={[
+                styles.modalContent,
+                { height, width: width ?? '90%' },
+                { backgroundColor: transparent ? undefined : 'FFF' },
+              ]}
+            >
+              {children}
+            </View>
           </TouchableWithoutFeedback>
         </View>
       </TouchableWithoutFeedback>
@@ -43,7 +62,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: '#FFF',
     maxWidth: '90%',
     maxHeight: '90%',
     borderRadius: 5,
