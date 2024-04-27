@@ -86,6 +86,7 @@ export const logIn = (payload: LoginPayload) => async (dispatch: AppDispatch) =>
     const response = await axios.post<AuthResponse>('/auth/login', payload);
     const { user, token } = response.data;
     if (user && token) {
+      console.log('token before saving in storage', token);
       await saveTokenInStorage(token);
       setTokenInAxiosHeaders(token);
       dispatch(loginSuccess(user));
@@ -106,6 +107,7 @@ export const autoLogIn = () => async (dispatch: AppDispatch) => {
     try {
       const storedToken = await getTokenFromStorage();
       if (storedToken) {
+        console.log('token from storage', storedToken);
         const response = await axios.get<AuthResponse>('/auth/verify', {
           headers: { authorization: storedToken },
         });

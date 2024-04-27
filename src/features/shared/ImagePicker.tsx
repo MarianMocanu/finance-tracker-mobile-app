@@ -6,22 +6,25 @@ import { SimpleModal } from './Modal';
 import { colors } from '@globals/style';
 import { FontAwesome5 } from '@expo/vector-icons';
 
-type Props = {};
+type Props = {
+  images: string[];
+  setImages: (images: string[]) => void;
+};
 
-export const ImagePicker: FC<Props> = () => {
+export const ImagePicker: FC<Props> = ({ images, setImages }) => {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [visible, setVisible] = useState(false);
   const cameraRef = useRef<Camera>(null);
-  const [images, setImages] = useState<string[]>([]);
 
   async function handleTakePicture(): Promise<void> {
     const image = await cameraRef.current?.takePictureAsync({
-      quality: 0.8,
+      quality: 0.2,
       base64: true,
       exif: true,
     });
     if (image) {
-      setImages([...images, image.uri]);
+      // console.log(JSON.stringify(image, null, 2));
+      setImages([...images, image.base64!]);
     }
     setVisible(false);
   }
