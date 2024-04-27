@@ -21,7 +21,7 @@ const CategoryEditForm: FC = (dispatch: any) => {
   });
   const { isLoading, mutate, isSuccess, isError } = useUpdateCategory(formData);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
-  const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+  const hexColorRegex = /^#([A-Fa-f0-9]{6})$/;
 
   useEffect(() => {
     if (!isLoading && category) {
@@ -100,7 +100,7 @@ const CategoryEditForm: FC = (dispatch: any) => {
           setInvalidFields([...invalidFields, 'color']);
           Toast.show({
             type: 'error',
-            text1: 'Color has to be a valid hexcode.',
+            text1: 'Color has to be a 6 character hexcode.',
           });
         }
       } else {

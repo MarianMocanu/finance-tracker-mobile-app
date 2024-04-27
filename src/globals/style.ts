@@ -13,7 +13,7 @@ const grey = {
 const text = {
   light: '#6E7F8B',
   dark: '#0D293D',
-  white: '#F5F5F5',
+  white: '#FCFCFC',
   black: '#212424',
 };
 

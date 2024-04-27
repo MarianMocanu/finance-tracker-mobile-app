@@ -101,7 +101,7 @@ export const SignupScreen: FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     paddingHorizontal: 20,
     marginBottom: 100,
   },

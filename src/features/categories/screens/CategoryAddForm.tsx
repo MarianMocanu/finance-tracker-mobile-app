@@ -16,7 +16,7 @@ const CategoryAddForm: FC = () => {
   const { mutate, isSuccess, isError, isLoading } = useAddCategory(formData);
   const [invalidFields, setInvalidFields] = useState<string[]>([]);
 
-  const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+  const hexColorRegex = /^#([A-Fa-f0-9]{6})$/;
 
   const submitForm = () => {
     if (
@@ -92,7 +92,7 @@ const CategoryAddForm: FC = () => {
           setInvalidFields([...invalidFields, 'color']);
           Toast.show({
             type: 'error',
-            text1: 'Color has to be a valid hexcode.',
+            text1: 'Color has to be a 6 character hexcode.',
           });
         }
       } else {
