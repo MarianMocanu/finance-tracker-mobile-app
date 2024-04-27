@@ -10,9 +10,8 @@ const contrastChecker = (hexColor: string) => {
   const b = parseInt(hexColor.slice(5, 7), 16);
 
   const lightness = r + g + b;
-
-  // returns true if value is light (fx. white)
-  return lightness > 128 ? true : false;
+  // returns true if value is lighter than default gray (fx. white)
+  return lightness > 382 ? true : false;
 };
 
 export default contrastChecker;

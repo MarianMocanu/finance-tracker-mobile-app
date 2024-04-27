@@ -25,6 +25,7 @@ import { useDeleteCategory } from 'src/mutations/Categories';
 import { EntriesStackParamList } from 'src/features/entries/EntriesStackNavigator';
 import contrastChecker from '@globals/ContrastChecker';
 import Toast from 'react-native-toast-message';
+import EntryListItem from 'src/features/entries/components/EntryListItem';
 
 const CategoryDetails: FC = () => {
   const route = useRoute<RouteProp<CategoriesStackParamList, 'view-category'>>();
@@ -190,13 +191,14 @@ const CategoryDetails: FC = () => {
               }
               keyExtractor={item => `entry-${item.id.toString()}`}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.card}
-                  onPress={() => navigateToDetailedView(item.id)}
-                >
-                  <Text>{item.name}</Text>
-                  <Text>{item.amount}</Text>
-                </TouchableOpacity>
+                <EntryListItem entry={item} from={'view-category'} />
+                // <TouchableOpacity
+                //   style={styles.card}
+                //   onPress={() => navigateToDetailedView(item.id)}
+                // >
+                //   <Text>{item.name}</Text>
+                //   <Text>{item.amount}</Text>
+                // </TouchableOpacity>
               )}
             />
           )}
