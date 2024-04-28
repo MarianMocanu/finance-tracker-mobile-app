@@ -10,6 +10,8 @@ import { Entry } from '@models';
 import Input from '@shared/Input';
 import Toast from 'react-native-toast-message';
 import { useCategories } from '@queries/Categories';
+import { ImagePicker } from '@shared/ImagePicker';
+
 const EntryAddForm: FC = () => {
   // date set to any to resolve issue caused by dayjs format
 
@@ -21,6 +23,7 @@ const EntryAddForm: FC = () => {
     date: new Date().toISOString(),
     comment: '',
     categoryId: undefined,
+    images: [],
   });
   const { isLoading, mutate, isSuccess, isError } = useAddEntry(formData);
   const { data: categories, isLoading: areCategoriesLoading } = useCategories();
@@ -48,6 +51,7 @@ const EntryAddForm: FC = () => {
         date: new Date().toISOString(),
         comment: '',
         categoryId: undefined,
+        images: [],
       });
       Toast.show({
         type: 'success',
@@ -121,6 +125,12 @@ const EntryAddForm: FC = () => {
         comment: value,
       }));
     },
+    images: (values: string[]) => {
+      setFormData(prevState => ({
+        ...prevState,
+        images: values,
+      }));
+    },
   };
 
   const validators = {
@@ -165,7 +175,7 @@ const EntryAddForm: FC = () => {
       <ScrollView
         keyboardShouldPersistTaps="handled"
         style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={styles.container}
         automaticallyAdjustKeyboardInsets
       >
         <SimpleModal visible={isDateModalVisible} closeModal={() => setIsDateModalVisible(false)}>
@@ -193,121 +203,123 @@ const EntryAddForm: FC = () => {
           />
         </SimpleModal>
 
-        <View style={styles.container}>
-          {/* NAME INPUT */}
-          <View style={styles.formFieldWrapper}>
-            <Text style={styles.inputLabel}>Entry name</Text>
-            <Input
-              keyboardType="default"
-              placeholder="Entry name"
-              style={invalidFields.includes('name') ? styles.invalid : styles.valid}
-              value={formData.name}
-              onChangeText={value => {
-                setters.name(value);
-              }}
-              onBlur={() => {
-                setters.name(formData.name.trim());
-                validators.name(formData.name);
-              }}
-            />
-          </View>
-          {/* AMOUNT INPUT */}
-          <View style={styles.formFieldWrapper}>
-            <Text style={styles.inputLabel}>Amount</Text>
-            <Input
-              keyboardType="number-pad"
-              placeholder="Amount"
-              style={invalidFields.includes('amount') ? styles.invalid : styles.valid}
-              value={formData.amount.toString()}
-              onChangeText={value => {
-                setters.amount(parseInt(value), operationType);
-              }}
-              onBlur={() => validators.amount(formData.amount)}
-            />
-          </View>
-          <View style={styles.formFieldWrapper}>
-            <Text style={styles.inputLabel}>Operation type</Text>
-            <Picker
-              data={operationTypes}
-              onChange={value => {
-                setOperationType(value);
-                setters.amount(formData.amount, value);
-              }}
-              initialSelectedIndex={0}
-              placeholder="Operation type"
-              containerStyle={styles.inputField}
-            />
-          </View>
-          <View style={styles.formFieldWrapper}>
-            <Text style={styles.inputLabel}>Currency</Text>
-            <Picker
-              data={['DKK', 'USD', 'EUR']}
-              onChange={setters.currency}
-              initialSelectedIndex={0}
-              placeholder="Currency"
-              containerStyle={styles.inputField}
-            />
-          </View>
-          {/* DATE INPUT and MODAL HANDLER */}
-          <Pressable onPress={() => setIsDateModalVisible(true)}>
-            <View style={styles.formFieldWrapper} pointerEvents="none">
-              <Text style={styles.inputLabel}>Date</Text>
-              {/* maybe you don't need a text input for the date, and just a simple Text component wrapped in a View styled as an inputFiled, check the Picker above for example */}
-              <Input
-                placeholder="Date"
-                style={styles.inputField}
-                value={formData.date.slice(0, 10)}
-                editable={false}
-              />
-            </View>
-          </Pressable>
-          {/* CATEGORY PICKER */}
-          {categories ? (
-            <View style={styles.formFieldWrapper}>
-              <Text style={styles.inputLabel}>Category</Text>
-              <Picker
-                data={[{ name: 'No Category', color: '#ffffff' }]
-                  .concat(
-                    categories.map(category => ({
-                      ...category,
-                      color: category.color || '#FFFFFF',
-                    })),
-                  )
-                  .map(category => category.name)}
-                onChange={setters.category}
-                initialSelectedIndex={0}
-                placeholder="Category"
-                containerStyle={styles.inputField}
-              />
-            </View>
-          ) : (
-            <ActivityIndicator size="small" color={colors.blue.dark} />
-          )}
-          {/* COMMENT INPUT */}
-          <View style={styles.formFieldWrapper}>
-            <Text style={styles.inputLabel}>Comment</Text>
-            <Input
-              keyboardType="default"
-              placeholder="Comment"
-              multiline
-              numberOfLines={4}
-              onChangeText={value => {
-                setters.comment(value);
-              }}
-              style={[styles.inputTextArea]}
-              value={formData.comment}
-              onBlur={() => {
-                formData.comment && setters.comment(formData.comment?.trim());
-              }}
-            />
-          </View>
-          <Button
-            primary
-            text="Add new entry"
-            onPress={() => submitForm()}
-            style={styles.addButtonWrapper} // use this style prop to style the button instead of wrapping it in a view
+        {/* NAME INPUT */}
+        <View style={styles.formFieldWrapper}>
+          <Text style={styles.inputLabel}>Entry name</Text>
+          <Input
+            keyboardType="default"
+            placeholder="Entry name"
+            style={invalidFields.includes('name') ? styles.invalid : styles.valid}
+            value={formData.name}
+            onChangeText={value => {
+              setters.name(value);
+            }}
+            onBlur={() => {
+              setters.name(formData.name.trim());
+              validators.name(formData.name);
+            }}
           />
         </View>
+        {/* AMOUNT INPUT */}
+        <View style={styles.formFieldWrapper}>
+          <Text style={styles.inputLabel}>Amount</Text>
+          <Input
+            keyboardType="number-pad"
+            placeholder="Amount"
+            style={invalidFields.includes('amount') ? styles.invalid : styles.valid}
+            value={formData.amount.toString()}
+            onChangeText={value => {
+              setters.amount(parseInt(value), operationType);
+            }}
+            onBlur={() => validators.amount(formData.amount)}
+          />
+        </View>
+        <View style={styles.formFieldWrapper}>
+          <Text style={styles.inputLabel}>Operation type</Text>
+          <Picker
+            data={operationTypes}
+            onChange={value => {
+              setOperationType(value);
+              setters.amount(formData.amount, value);
+            }}
+            initialSelectedIndex={0}
+            placeholder="Operation type"
+            containerStyle={styles.inputField}
+          />
+        </View>
+        <View style={styles.formFieldWrapper}>
+          <Text style={styles.inputLabel}>Currency</Text>
+          <Picker
+            data={['DKK', 'USD', 'EUR']}
+            onChange={setters.currency}
+            initialSelectedIndex={0}
+            placeholder="Currency"
+            containerStyle={styles.inputField}
+          />
+        </View>
+        {/* DATE INPUT and MODAL HANDLER */}
+        <Pressable onPress={() => setIsDateModalVisible(true)}>
+          <View style={styles.formFieldWrapper} pointerEvents="none">
+            <Text style={styles.inputLabel}>Date</Text>
+            {/* maybe you don't need a text input for the date, and just a simple Text component wrapped in a View styled as an inputFiled, check the Picker above for example */}
+            <Input
+              placeholder="Date"
+              style={styles.inputField}
+              value={formData.date.slice(0, 10)}
+              editable={false}
+            />
+          </View>
+        </Pressable>
+        {/* CATEGORY PICKER */}
+        {categories ? (
+          <View style={styles.formFieldWrapper}>
+            <Text style={styles.inputLabel}>Category</Text>
+            <Picker
+              data={[{ name: 'No Category', color: '#ffffff' }]
+                .concat(
+                  categories.map(category => ({
+                    ...category,
+                    color: category.color || '#FFFFFF',
+                  })),
+                )
+                .map(category => category.name)}
+              onChange={setters.category}
+              initialSelectedIndex={0}
+              placeholder="Category"
+              containerStyle={styles.inputField}
+            />
+          </View>
+        ) : (
+          <ActivityIndicator size="small" color={colors.blue.dark} />
+        )}
+        {/* COMMENT INPUT */}
+        <View style={styles.formFieldWrapper}>
+          <Text style={styles.inputLabel}>Comment</Text>
+          <Input
+            keyboardType="default"
+            placeholder="Comment"
+            multiline
+            numberOfLines={4}
+            onChangeText={value => {
+              setters.comment(value);
+            }}
+            style={[styles.inputTextArea]}
+            value={formData.comment}
+            onBlur={() => {
+              formData.comment && setters.comment(formData.comment?.trim());
+            }}
+          />
+        </View>
+        <View style={styles.formFieldWrapper}>
+          <Text style={styles.inputLabel}>Pictures</Text>
+          <ImagePicker images={formData.images} setImages={setters.images} />
+        </View>
+        <Button
+          primary
+          text="Add new entry"
+          onPress={() => submitForm()}
+          style={styles.addButtonWrapper}
+        />
       </ScrollView>
       <Toast />
     </>
@@ -318,7 +330,6 @@ export default EntryAddForm;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexGrow: 1,
     padding: 12,
     paddingTop: 12,

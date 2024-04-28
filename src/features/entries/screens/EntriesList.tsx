@@ -27,7 +27,9 @@ const EntriesList: FC = () => {
       </Button>
       <FlatList
         style={styles.list}
-        contentContainerStyle={{ flex: 1 }}
+        // if you apply padding/margin on the content of the Flatlist instead of the Flatlist itself
+        // then the scroll bar will not use the padding/margin
+        contentContainerStyle={styles.scrollContent}
         data={entries}
         keyExtractor={item => `entry-${item.id.toString()}`}
         renderItem={({ item }) => <EntryListItem entry={item} from="entries-list" />}
@@ -46,7 +48,9 @@ export default EntriesList;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 20,
+  },
+  scrollContent: {
+    padding: 20,
   },
   text: {
     fontSize: 18,

@@ -6,4 +6,5 @@ export type Entry = {
   name: string;
   comment?: string;
   categoryId?: number | null;
+  images: string[];
 };

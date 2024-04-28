@@ -90,7 +90,8 @@ export const Picker: FC<Props<any>> = ({
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           renderItem={({ item }) => renderItem(item)}
           contentContainerStyle={{ width: '100%' }}
-          style={{ width: '100%' }}
+          style={{ width: '100%', backgroundColor: '#FFF' }}
+          scrollEnabled={false}
         />
       </SimpleModal>
     </TouchableOpacity>
