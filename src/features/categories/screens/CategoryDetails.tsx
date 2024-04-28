@@ -95,6 +95,7 @@ const CategoryDetails: FC = () => {
         <View style={styles.container}>
           {/* DELETE MODAL */}
           <SimpleModal
+            transparent={false}
             visible={isDeleteModalVisible}
             closeModal={() => (isDeleteSuccess ? navigateToList() : setIsDeleteModalVisible(false))}
           >
@@ -183,6 +184,11 @@ const CategoryDetails: FC = () => {
               <Ionicons name="create-outline" size={24} color={colors.blue.base} />
             </TouchableOpacity>
           </View>
+          {categoryEntries && categoryEntries.length === 0 && (
+            <Text style={[styles.header, { color: colors.text.light, marginVertical: 10 }]}>
+              No entries found
+            </Text>
+          )}
           {categoryEntries && categoryEntries?.length > 0 && (
             <FlatList
               style={styles.list}

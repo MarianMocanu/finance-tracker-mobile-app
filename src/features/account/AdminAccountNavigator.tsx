@@ -12,15 +12,13 @@ type ProfileStackParamList = {
 };
 
 const Stack = createNativeStackNavigator<ProfileStackParamList>();
-// const [isAdmin, setIsAdmin] = useState(false);
-
-function AccountNavigator() {
+function AdminAccountNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="view-profile" component={Account} />
-      <Stack.Screen name="edit-profile" component={Account} />
+      <Stack.Screen name="view-profile" component={AdminAccount} />
+      <Stack.Screen name="edit-profile" component={AdminAccount} />
     </Stack.Navigator>
   );
 }
 
-export default AccountNavigator;
+export default AdminAccountNavigator;

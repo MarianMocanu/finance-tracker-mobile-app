@@ -1,3 +1,4 @@
+import { colors } from '@globals/style';
 import { FC, PropsWithChildren } from 'react';
 import { Modal, View, StyleSheet, DimensionValue, TouchableWithoutFeedback } from 'react-native';
 
@@ -42,7 +43,7 @@ export const SimpleModal: FC<Props> = ({
               style={[
                 styles.modalContent,
                 { height, width: width ?? '90%' },
-                { backgroundColor: transparent ? undefined : 'FFF' },
+                { backgroundColor: transparent ? undefined : colors.text.white },
               ]}
             >
               {children}

@@ -1,9 +1,12 @@
+import { User } from '@models';
 import Button from '@shared/Button';
-import { FC } from 'react';
+import axios from 'axios';
+import { FC, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'src/app/store';
-import { logOut } from 'src/features/auth/authSlice';
+import { getTokenFromStorage } from 'src/app/util';
+import authSlice, { logOut } from 'src/features/auth/authSlice';
 
 const Account: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -11,9 +14,15 @@ const Account: FC = () => {
   function handleLogout(): void {
     dispatch(logOut());
   }
+
+  type AuthResponse = {
+    user: User;
+    token: string;
+  };
+
   return (
     <View style={style.container}>
-      <Text>Here is the profile screen</Text>
+      <Text style={[style.header, { marginVertical: 10 }]}>Here is the profile screen</Text>
       <Button text="Logout" onPress={handleLogout} primary style={style.button} />
     </View>
   );
@@ -34,5 +43,11 @@ const style = StyleSheet.create({
   },
   button: {
     width: '100%',
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: '600',
+    alignSelf: 'center',
+    textTransform: 'capitalize',
   },
 });

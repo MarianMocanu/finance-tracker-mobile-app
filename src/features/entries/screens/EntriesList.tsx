@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: 'absolute',
-    bottom: 0,
-    right: 0,
+    bottom: 20,
+    right: 20,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
