@@ -21,6 +21,7 @@ export const Main: FC = () => {
   if (auth.status === 'loading') {
     return <ActivityIndicator size="large" color={colors.blue.dark} style={{ flex: 1 }} />;
   }
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
