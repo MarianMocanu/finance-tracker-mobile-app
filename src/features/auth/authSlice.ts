@@ -75,7 +75,7 @@ type LoginPayload = {
   password: string;
 };
 
-type AuthResponse = {
+export type AuthResponse = {
   user: User;
   token: string;
 };

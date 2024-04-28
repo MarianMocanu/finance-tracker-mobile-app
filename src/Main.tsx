@@ -8,6 +8,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import AuthStackNavigator from './navigation/AuthStackNavigator';
 import { autoLogIn } from './features/auth/authSlice';
 import { colors } from '@globals/style';
+import AdminNavigator from './navigation/AdminNavigator';
 
 export const Main: FC = () => {
   const auth = useSelector((state: RootState) => state.auth);
@@ -20,12 +21,13 @@ export const Main: FC = () => {
   if (auth.status === 'loading') {
     return <ActivityIndicator size="large" color={colors.blue.dark} style={{ flex: 1 }} />;
   }
-
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <NavigationContainer>
-        {auth.isLoggedIn ? <TabNavigator /> : <AuthStackNavigator />}
+        {auth.isLoggedIn && auth.user?.role === 'admin' && <AdminNavigator />}
+        {auth.isLoggedIn && auth.user?.role !== 'admin' && <TabNavigator />}
+        {!auth.isLoggedIn && <AuthStackNavigator />}
       </NavigationContainer>
     </View>
   );
