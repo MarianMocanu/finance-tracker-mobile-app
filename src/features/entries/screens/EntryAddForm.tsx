@@ -11,7 +11,6 @@ import Input from '@shared/Input';
 import Toast from 'react-native-toast-message';
 import { useCategories } from '@queries/Categories';
 import { ImagePicker } from '@shared/ImagePicker';
-import axios from 'axios';
 
 const EntryAddForm: FC = () => {
   // date set to any to resolve issue caused by dayjs format
@@ -35,21 +34,12 @@ const EntryAddForm: FC = () => {
   const numRegex = /^-?\d+(\.\d+)?$/;
 
   const submitForm = () => {
-    if (formData.images[0]) {
-      1;
-      axios
-        .post(
-          `https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5&source=${formData.images[0]}&format=json`,
-        )
-        .then(response => console.log(JSON.stringify(response, null, 2)))
-        .catch(error => console.log('errrrrrror', error));
-    }
-    // invalidFields.length === 0 && !isLoading
-    //   ? mutate(formData)
-    //   : Toast.show({
-    //       type: 'error',
-    //       text1: 'Invalid fields.',
-    //     });
+    invalidFields.length === 0 && !isLoading
+      ? mutate(formData)
+      : Toast.show({
+          type: 'error',
+          text1: 'Invalid fields.',
+        });
   };
 
   useEffect(() => {

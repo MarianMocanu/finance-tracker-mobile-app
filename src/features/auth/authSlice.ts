@@ -107,7 +107,6 @@ export const autoLogIn = () => async (dispatch: AppDispatch) => {
     try {
       const storedToken = await getTokenFromStorage();
       if (storedToken) {
-        console.log('token from storage', storedToken);
         const response = await axios.get<AuthResponse>('/auth/verify', {
           headers: { authorization: storedToken },
         });

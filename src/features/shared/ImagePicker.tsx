@@ -23,8 +23,7 @@ export const ImagePicker: FC<Props> = ({ images, setImages }) => {
       exif: true,
     });
     if (image) {
-      // console.log(JSON.stringify(image, null, 2));
-      setImages([...images, image.base64!]);
+      setImages([...images, image.uri]);
     }
     setVisible(false);
   }
@@ -45,15 +44,15 @@ export const ImagePicker: FC<Props> = ({ images, setImages }) => {
     <>
       <View style={styles.picturesContainer}>
         {images.map((image, index) => (
-          <>
-            <Image key={index} source={{ uri: image }} style={styles.picture} />
-            <Button onPress={() => setImages(images.filter((_, i) => i !== index))}>
-              <FontAwesome5
-                name="times"
-                style={{ ...styles.icon, color: '#FFF', position: 'absolute', right: 10, top: 5 }}
-              />
+          <View key={index}>
+            <Image source={{ uri: image }} style={styles.picture} />
+            <Button
+              onPress={() => setImages(images.filter((_, i) => i !== index))}
+              style={{ position: 'absolute', right: 10, top: 5 }}
+            >
+              <FontAwesome5 name="times" style={{ ...styles.icon, color: '#FFF' }} />
             </Button>
-          </>
+          </View>
         ))}
         <Button onPress={openCamera} style={styles.addPicture}>
           <FontAwesome5 name="camera" style={styles.icon} />
